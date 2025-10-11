@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <Name Value="Web6502"/>
+    <Type Value="RunTimeOnly"/>
+    <Author Value="Kevin Veroneau"/>
+    <AutoUpdate Value="Manually"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="."/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Description Value="An ObjectPascal wrapper around the infamous 6502cpu.js 6502 Emulator for JavaScript."/>
+    <Version Minor="1"/>
+    <Files>
+      <Item>
+        <Filename Value="mos6502.pas"/>
+        <UnitName Value="mos6502"/>
+      </Item>
+      <Item>
+        <Filename Value="dev6502.pas"/>
+        <UnitName Value="dev6502"/>
+      </Item>
+      <Item>
+        <Filename Value="memory6502.pas"/>
+        <UnitName Value="memory6502"/>
+      </Item>
+      <Item>
+        <Filename Value="devicehub6502.pas"/>
+        <UnitName Value="devicehub6502"/>
+      </Item>
+      <Item>
+        <Filename Value="card6502.pas"/>
+        <UnitName Value="card6502"/>
+      </Item>
+      <Item>
+        <Filename Value="cardslots6502.pas"/>
+        <UnitName Value="cardslots6502"/>
+      </Item>
+      <Item>
+        <Filename Value="rom6502.pas"/>
+        <UnitName Value="rom6502"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
