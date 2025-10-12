@@ -180,7 +180,7 @@ begin
   inherited Create(AOwner);
   FTimer:=TTimer.Create(Self);
   FTimer.Enabled:=False;
-  FTimer.Interval:=1000;
+  FTimer.Interval:=100;
   FTimer.OnTimer:=@RunCycle;
   FMemory:=Nil;
 end;

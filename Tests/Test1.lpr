@@ -16,9 +16,8 @@ type
     FMemory: T6502Memory;
     FSlots: T6502CardSlots;
     FTestCard: T6502Card;
-    FWebFile: TBytesStream;
     FROM: T6502ROM;
-    procedure PRGLoaded(Sender: TObject);
+    FContent: TJSHTMLElement;
     procedure ROMLoaded(Sender: TObject);
     procedure CardInit(Sender: TObject);
     procedure CardTest(Sender: TObject);
@@ -29,19 +28,10 @@ type
 
 {$R ROM0.bin}
 
-procedure TMyApplication.PRGLoaded(Sender: TObject);
-begin
-  WriteLn('PRG Loaded.');
-  FMemory.LoadInto(FWebFile, F6502.ResetVector);
-  FWebFile.Free;
-  FWebFile:=Nil;
-  F6502.Running:=True;
-end;
-
 procedure TMyApplication.ROMLoaded(Sender: TObject);
 begin
   FMemory.Active:=True;
-  WriteLn('ROM Loaded: ', FMemory.Memory[$2000]);
+  WriteLn('ROM Loaded: ', FMemory.Memory[$2001]);
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);
   FTestCard:=T6502Card.Create(Self);
@@ -57,9 +47,6 @@ end;
 
 procedure TMyApplication.CardInit(Sender: TObject);
 begin
-  {FWebFile:=TBytesStream.Create;
-  FWebFile.LoadFromURL('test1.prg', True, @PRGLoaded);}
-
   Writeln('Hello World from CardInit!');
 end;
 
@@ -70,17 +57,24 @@ begin
   if not FROM.Active then
     Exit;
   op:=FTestCard.Memory[0];
-  WriteLn('Test Card Op Code: ',op);
-  if op <> 0 then
-    F6502.Running:=False;
+  if op > 0 then
+  begin
+    WriteLn('Test Card Op Code: ',op);
+    case op of
+      $42: F6502.Running:=False;
+      $80: FContent.innerHTML:=FContent.innerHTML+FMemory.GetStringPtr($c002);
+    end;
+    FTestCard.Memory[0]:=0;
+  end;
 end;
 
 procedure TMyApplication.DoRun;
 begin
+  FContent:=GetHTMLElement('content');
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
   FROM.Address:=$2000;
-  FROM.ROMFile:='test1.prg';
+  FROM.ROMFile:='rom0';
   FROM.OnROMLoad:=@ROMLoaded;
   FMemory.ROM[0]:=FROM;
   FROM.Active:=True;
