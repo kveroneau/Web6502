@@ -67,3 +67,17 @@ end.
 ```
 
 The above example will load in a .PRG compatible binary program from the web server and place it in memory.
+
+## Creating 6502 compatible programs
+
+There are technically a few approaches you could take to build compatible 6502 programs for use with *Web6502*, here is a list of potential examples:
+
+  * Create devices to mimic a real world retro 6502 machine, such as the *Commodore 64*, and use compatible assemblers and compilers targetted to that specific system.
+    - You may also need to either source a C64 ROM, or build your own shim ROM.
+    - ROM routines could just be emulated via a virtual device to speed up overall emulation.
+    - Compatible Canvas routines, or a compatible HTML5 terminal would be needed to emulate I/O.
+  * Use the included devices, cards, and APIs.  Craft your custom 6502 programs to target this web-based system, and extend it with your own devices and cards as needed.
+    - A **cc65** compatible library and development kit will soon be provided to allow you to create compatible 6502 programs in the popular C programming language.  You will need to download and configure *cc65* in order to use it.
+  * Create a completely custom 6502 system with APIs to your personal liking, and hand assemble the programs yourself.
+
+Once the *C Library* is made available via this repository, it will also have some basic examples which you can compile yourself to learn how to build your own using C.  This is also a really fun and safe way to learn the *C Programming Language*, as all the running C code is both entirely contained inside a virtual 6502 emulator, which is contained within your web browser.
