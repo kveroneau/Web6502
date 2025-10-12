@@ -43,9 +43,9 @@ Most of these are there to access the system registers directly, although, you s
     - It is a requirement to toggle this during an infinite loop, if you are expecting user input/interaction.
   * `ResetVector`: Should be set before setting **Active** to True.
   * `HaltVector`: Allows so-called *Hypervisor* routines to be enabled at a specific memory address.
-    `$40`: Set this to the vector to set *rmTimer* RunMode.
-    `$41`: Set this to the vector to set *rmReal* RunMode.
-    `$42`: Set this to the vector to suspend the 6502 CPU Code, can be resumed via *Running*.
+    - `$40`: Set this to the vector to set *rmTimer* RunMode.
+    - `$41`: Set this to the vector to set *rmReal* RunMode.
+    - `$42`: Set this to the vector to suspend the 6502 CPU Code, can be resumed via *Running*.
 
 ## T6502Memory
 
