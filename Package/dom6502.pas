@@ -53,7 +53,7 @@ begin
   if op > 0 then
   begin
     case op of
-      $80: FBuffer.Add(SysMemory.GetStringPtr($c002));
+      $80: FBuffer.Add(GetStringPtr(2));
     end;
     FElement.innerHTML:=FBuffer.Text;
     Memory[0]:=0;

@@ -46,7 +46,7 @@ end;
 
 procedure T6502CanvasCard.Write;
 begin
-  FCanvas.strokeText(SysMemory.GetStringPtr($c002), FCol*10,FRow*10);
+  FCanvas.strokeText(GetStringPtr(2), FCol*10,FRow*10);
   Inc(FRow);
 end;
 

@@ -23,6 +23,9 @@ type
     procedure SetSysMemory(AValue: T6502Memory);
   protected
     function GetCardType: byte; virtual;
+    function GetWord(addr: byte): word;
+    function GetString(addr: byte): string;
+    function GetStringPtr(addr: byte): string;
   public
     property SysMemory: T6502Memory read FSysMemory write SetSysMemory;
     property CardAddr: word read FCardAddr write FCardAddr;
@@ -61,6 +64,21 @@ end;
 function T6502Card.GetCardType: byte;
 begin
   Result:=$99;
+end;
+
+function T6502Card.GetWord(addr: byte): word;
+begin
+  Result:=(Memory[addr+1] shl 8)+Memory[addr];
+end;
+
+function T6502Card.GetString(addr: byte): string;
+begin
+  Result:=SysMemory.GetString(CardAddr+addr);
+end;
+
+function T6502Card.GetStringPtr(addr: byte): string;
+begin
+  Result:=SysMemory.GetStringPtr(CardAddr+addr);
 end;
 
 procedure T6502Card.CardRun;

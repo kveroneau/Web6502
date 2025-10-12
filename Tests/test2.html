@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Project1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="assets/tvision.css" rel="stylesheet"/>
+  <link href="assets/jquery.terminal.css" rel="stylesheet"/>
+  <script src="assets/jquery-1.7.2.min.js"></script>
+  <script src="assets/jquery.terminal-0.8.8.min.js"></script>
+  <script src="assets/6502cpu.js"></script>
+  <script src="assets/Test2.js"></script>
+</head>
+<body>
+  <div id="screen">
+    <div id="titleBar" class="blue window"><h1>Web6502 Terminal</h1></div>
+    <div id="terminal" class="blue window"></div>
+  </div>
+  <script>
+    rtl.showUncaughtExceptions=true;
+    window.addEventListener("load", rtl.run);
+  </script>
+</body>
+</html>

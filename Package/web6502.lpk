@@ -50,8 +50,15 @@
         <Filename Value="canvas6502.pas"/>
         <UnitName Value="canvas6502"/>
       </Item>
+      <Item>
+        <Filename Value="terminal6502.pas"/>
+        <UnitName Value="terminal6502"/>
+      </Item>
     </Files>
     <RequiredPkgs>
+      <Item>
+        <PackageName Value="jslib"/>
+      </Item>
       <Item>
         <PackageName Value="FCL"/>
       </Item>
