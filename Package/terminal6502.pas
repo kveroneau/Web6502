@@ -14,7 +14,9 @@ type
   T6502TerminalCard = class(T6502Card)
   private
     FTerm: TJQuery;
+    FCmdBuf: word;
     procedure onCommand(command: string; term: TJQuery);
+    procedure DoPrompt;
   protected
     function GetCardType: byte; override;
   public
@@ -27,13 +29,25 @@ implementation
 { T6502TerminalCard }
 
 procedure T6502TerminalCard.onCommand(command: string; term: TJQuery);
+var
+  i: Integer;
 begin
+  FTerm.Enabled:=False;
+  for i:=0 to Length(command)-1 do
+    SysMemory.Memory[FCmdBuf+i]:=ord(command[i+1]);
+  SysMemory.Memory[FCmdBuf+i+2]:=0;
+end;
 
+procedure T6502TerminalCard.DoPrompt;
+begin
+  FTerm.Prompt:=GetStringPtr(2);
+  FCmdBuf:=GetWord(4);
+  FTerm.Enabled:=True;
 end;
 
 function T6502TerminalCard.GetCardType: byte;
 begin
-  Result:=$76;
+  Result:=$42;
 end;
 
 constructor T6502TerminalCard.Create(AOwner: TComponent);
@@ -56,6 +70,7 @@ begin
     Exit;
   case op of
     $80: FTerm.Echo(GetStringPtr(2));
+    $81: DoPrompt;
   end;
   Memory[0]:=0;
 end;

@@ -39,6 +39,7 @@ begin
   F6502.Device:=FSlots;
   F6502.Active:=True;
   F6502.HaltVector:=$fff0;
+  F6502.RunMode:=rmReal;
   F6502.Running:=True;
 end;
 
