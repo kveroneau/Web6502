@@ -16,6 +16,8 @@ type
     FTerm: TWebTerminal;
     FCmdBuf: word;
     procedure HandleLine(const data: string);
+    procedure SyncMemory;
+    procedure DoPrompt;
   published
     function GetCardType: byte; override;
   public
@@ -36,6 +38,27 @@ begin
   SysMemory.Memory[FCmdBuf+i+2]:=0;
 end;
 
+procedure TVT100Card.SyncMemory;
+var
+  x,y: byte;
+begin
+  FTerm.Attr:=Memory[$20];
+  x:=Memory[$21];
+  y:=Memory[$22];
+  if (x > 0) and (y > 0) then
+  begin
+    FTerm.MoveTo(x,y);
+    SetWord($21,0);
+  end;
+end;
+
+procedure TVT100Card.DoPrompt;
+begin
+  FTerm.Prompt:=GetStringPtr(2);
+  FCmdBuf:=GetWord(4);
+  FTerm.EnableInput;
+end;
+
 function TVT100Card.GetCardType: byte;
 begin
   Result:=$76;
@@ -47,6 +70,7 @@ begin
   FTerm:=TWebTerminal.Create;
   FTerm.OnPayload:=@HandleLine;
   FTerm.WriteLn('6502 Terminal Card Initialized.');
+  FCmdBuf:=$c0a0;
 end;
 
 procedure TVT100Card.CardRun;
@@ -56,8 +80,11 @@ begin
   op:=Memory[0];
   if op = 0 then
     Exit;
+  SyncMemory;
   case op of
     $80: FTerm.Write(GetStringPtr(2));
+    $81: DoPrompt;
+    $82: FTerm.Clear;
   end;
   Memory[0]:=0;
 end;

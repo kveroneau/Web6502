@@ -71,6 +71,7 @@ begin
   case op of
     $80: FTerm.Echo(GetStringPtr(2));
     $81: DoPrompt;
+    $82: FTerm.Clear;
   end;
   Memory[0]:=0;
 end;
