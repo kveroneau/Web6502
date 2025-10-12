@@ -124,11 +124,21 @@ begin
 end;
 
 procedure TMOS6502.CheckRunning;
+var
+  op: byte;
 begin
   if FHaltVector = 0 then
     Exit;
-  if FMemory.Memory[FHaltVector] = $42 then
+  op:=FMemory.Memory[FHaltVector];
+  if op = $40 then
+    FRunMode:=rmTimer
+  else if op = $41 then
+    FRunMode:=rmReal
+  else if op = $42 then
+  begin
+    FTimer.Enabled:=False;
     FRunning:=False;
+  end;
 end;
 
 procedure TMOS6502.SetActive(AValue: Boolean);
