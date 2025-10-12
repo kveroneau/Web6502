@@ -42,6 +42,10 @@
         <Filename Value="rom6502.pas"/>
         <UnitName Value="rom6502"/>
       </Item>
+      <Item>
+        <Filename Value="dom6502.pas"/>
+        <UnitName Value="dom6502"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

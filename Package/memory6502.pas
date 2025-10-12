@@ -30,6 +30,7 @@ type
     function GetString(addr: word): string;
     function GetStringPtr(addr: word): string;
     procedure LoadInto(strm: TStream; addr: word);
+    function LoadPRG(strm: TStream): word;
   end;
 
 implementation
@@ -118,8 +119,17 @@ var
   buf: TBytes;
 begin
   WriteLn('Loading data into ',addr);
-  strm.Read(buf, strm.Size);
+  strm.Read(buf, strm.Size-strm.Position);
   jsWriteMemory(addr, buf, False);
+end;
+
+function T6502Memory.LoadPRG(strm: TStream): word;
+var
+  addr: word;
+begin
+  addr:=strm.ReadByte+(strm.ReadByte shl 8);
+  LoadInto(strm, addr);
+  Result:=addr;
 end;
 
 end.

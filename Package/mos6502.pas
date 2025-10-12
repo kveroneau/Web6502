@@ -5,11 +5,13 @@ unit MOS6502;
 interface
 
 uses
-  Classes, SysUtils, JS, timer, Memory6502, Dev6502;
+  Classes, SysUtils, timer, Memory6502, Dev6502;
 
 type
 
   E6502Error = class(Exception);
+
+  TRunMode = (rmTimer, rmReal);
 
   { TMOS6502 }
 
@@ -18,16 +20,19 @@ type
     FActive: Boolean;
     FMemory: T6502Memory;
     FDevice: T6502Device;
-    FResetVector: word;
+    FResetVector, FHaltVector: word;
     FRunning: Boolean;
     FTimer: TTimer;
+    FRunMode: TRunMode;
     function GetPC: word;
     function GetRegA: byte;
     function GetRegAX: word;
     function GetRegX: byte;
     function GetRegY: byte;
+    procedure CheckRunning;
     procedure RunCycle(Sender: TObject);
     procedure SetActive(AValue: Boolean);
+    procedure SetHaltVector(AValue: word);
     procedure SetMemory(AValue: T6502Memory);
     procedure SetPC(AValue: word);
     procedure SetRegA(AValue: byte);
@@ -41,7 +46,9 @@ type
     property Memory: T6502Memory read FMemory write SetMemory;
     property Device: T6502Device read FDevice write FDevice;
     property Running: Boolean read FRunning write SetRunning;
+    property RunMode: TRunMode read FRunMode write FRunMode;
     property ResetVector: word read FResetVector write SetResetVector;
+    property HaltVector: word read FHaltVector write SetHaltVector;
     property PC: word read GetPC write SetPC;
     property RegA: byte read GetRegA write SetRegA;
     property RegX: byte read GetRegX write SetRegX;
@@ -79,6 +86,16 @@ procedure TMOS6502.RunCycle(Sender: TObject);
 begin
   jsStepCPU;
   FDevice.DeviceRun;
+  CheckRunning;
+  if FRunMode = rmReal then
+  begin
+    WriteLn('Entering Real-time...');
+    repeat
+      jsStepCPU;
+      FDevice.DeviceRun;
+      CheckRunning;
+    until (not FRunning) or (FRunMode = rmTimer);
+  end;
 end;
 
 function TMOS6502.GetPC: word;
@@ -106,6 +123,14 @@ begin
   Result:=jsGetY;
 end;
 
+procedure TMOS6502.CheckRunning;
+begin
+  if FHaltVector = 0 then
+    Exit;
+  if FMemory.Memory[FHaltVector] = $42 then
+    FRunning:=False;
+end;
+
 procedure TMOS6502.SetActive(AValue: Boolean);
 begin
   if FActive=AValue then Exit;
@@ -121,6 +146,13 @@ begin
   else if FRunning then
     Running:=False;
   FActive:=AValue;
+end;
+
+procedure TMOS6502.SetHaltVector(AValue: word);
+begin
+  if FHaltVector=AValue then Exit;
+  FMemory.Memory[AValue]:=0;
+  FHaltVector:=AValue;
 end;
 
 procedure TMOS6502.SetMemory(AValue: T6502Memory);
@@ -183,6 +215,8 @@ begin
   FTimer.Interval:=100;
   FTimer.OnTimer:=@RunCycle;
   FMemory:=Nil;
+  FRunMode:=rmTimer;
+  FHaltVector:=0;
 end;
 
 end.
