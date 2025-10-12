@@ -7,6 +7,9 @@ uses
   Memory6502, rom6502, CardSlots6502, terminal6502;
 
 type
+
+  { TMyApplication }
+
   TMyApplication = class(TBrowserApplication)
   private
     F6502: TMOS6502;
@@ -14,6 +17,8 @@ type
     FROM: T6502ROM;
     FSlots: T6502CardSlots;
     FTerm: T6502TerminalCard;
+    FWebFile: TBytesStream;
+    procedure BinLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
   public
@@ -21,8 +26,16 @@ type
 
 {$R ROM0.bin}
 
+procedure TMyApplication.BinLoaded(Sender: TObject);
+begin
+  FMemory.LoadInto(FWebFile, $2000);
+  FreeAndNil(FWebFile);
+end;
+
 procedure TMyApplication.DoRun;
 begin
+  FWebFile:=TBytesStream.Create;
+  FWebFile.LoadFromURL('hello.bin', True, @BinLoaded);
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
   FROM.Address:=$f000;
