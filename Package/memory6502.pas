@@ -30,7 +30,10 @@ type
     function GetString(addr: word): string;
     function GetStringPtr(addr: word): string;
     procedure LoadInto(strm: TStream; addr: word);
+    procedure LoadString(data: string; addr: word);
     function LoadPRG(strm: TStream): word;
+    procedure SaveInto(strm: TStream; addr, size: word);
+    function SaveString(addr, size: word): string;
   end;
 
 implementation
@@ -123,6 +126,14 @@ begin
   jsWriteMemory(addr, buf, False);
 end;
 
+procedure T6502Memory.LoadString(data: string; addr: word);
+var
+  i: Integer;
+begin
+  for i:=0 to Length(data)-1 do
+    jsWriteByteAt(addr+i, ord(data[i+1]), False);
+end;
+
 function T6502Memory.LoadPRG(strm: TStream): word;
 var
   addr: word;
@@ -130,6 +141,25 @@ begin
   addr:=strm.ReadByte+(strm.ReadByte shl 8);
   LoadInto(strm, addr);
   Result:=addr;
+end;
+
+procedure T6502Memory.SaveInto(strm: TStream; addr, size: word);
+var
+  buf: TBytes;
+begin
+  buf:=jsReadMemory(addr, size, True);
+  strm.Write(buf, size);
+end;
+
+function T6502Memory.SaveString(addr, size: word): string;
+var
+  data: string;
+  i: Integer;
+begin
+  SetLength(data, size);
+  for i:=0 to size-1 do
+    data[i+1]:=chr(jsReadByteAt(addr+i, True));
+  Result:=data;
 end;
 
 end.

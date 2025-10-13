@@ -89,7 +89,6 @@ begin
   CheckRunning;
   if FRunMode = rmReal then
   begin
-    WriteLn('Entering Real-time...');
     repeat
       jsStepCPU;
       FDevice.DeviceRun;

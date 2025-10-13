@@ -5,7 +5,7 @@ unit DeviceHub6502;
 interface
 
 uses
-  Classes, SysUtils, Dev6502;
+  Classes, SysUtils, Dev6502, Memory6502;
 
 type
 

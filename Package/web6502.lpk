@@ -58,6 +58,10 @@
         <Filename Value="vt6502.pas"/>
         <UnitName Value="vt6502"/>
       </Item>
+      <Item>
+        <Filename Value="storage6502.pas"/>
+        <UnitName Value="storage6502"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
