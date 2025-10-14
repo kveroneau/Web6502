@@ -77,6 +77,15 @@ procedure TVT100Card.CardRun;
 var
   op: byte;
 begin
+  op:=Memory[1];
+  if op > 0 then
+  begin
+    if op = 10 then
+      FTerm.Write(#13#10)
+    else
+      FTerm.Write(chr(op));
+    Memory[1]:=0;
+  end;
   op:=Memory[0];
   if op = 0 then
     Exit;

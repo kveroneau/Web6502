@@ -15,6 +15,7 @@ type
   private
     FBuffer: TStringList;
     FElement: TJSHTMLElement;
+    FLineBuf: string;
     procedure SetElement(AValue: string);
   protected
     function GetCardType: byte; override;
@@ -43,12 +44,26 @@ begin
   inherited Create(AOwner);
   FElement:=Nil;
   FBuffer:=TStringList.Create;
+  FLineBuf:='';
 end;
 
 procedure T6502DOMOutput.CardRun;
 var
   op: byte;
 begin
+  op:=Memory[1];
+  if op > 0 then
+  begin
+    if op = 10 then
+    begin
+      FBuffer.Add(FLineBuf+'<br/>');
+      FLineBuf:='';
+      FElement.innerHTML:=FBuffer.Text;
+    end
+    else
+      FLineBuf:=FLineBuf+chr(op);
+    Memory[1]:=0;
+  end;
   op:=Memory[0];
   if op > 0 then
   begin

@@ -15,6 +15,7 @@ type
   private
     FTerm: TJQuery;
     FCmdBuf: word;
+    FBuffer: string;
     procedure onCommand(command: string; term: TJQuery);
     procedure DoPrompt;
   protected
@@ -58,6 +59,7 @@ begin
   params:=SimpleTerm;
   FTerm:=InitTerminal('terminal', @onCommand, params, Nil);
   FTerm.Enabled:=False;
+  FBuffer:='';
   FTerm.Echo('6502 Terminal Card Initialized.');
 end;
 
@@ -65,6 +67,18 @@ procedure T6502TerminalCard.CardRun;
 var
   op: byte;
 begin
+  op:=Memory[1];
+  if op > 0 then
+  begin
+    if op = 10 then
+    begin
+      FTerm.Echo(FBuffer);
+      FBuffer:='';
+    end
+    else
+      FBuffer:=FBuffer+chr(op);
+    Memory[1]:=0;
+  end;
   op:=Memory[0];
   if op = 0 then
     Exit;

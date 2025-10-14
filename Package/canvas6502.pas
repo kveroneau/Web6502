@@ -15,9 +15,10 @@ type
   private
     FCanvas: TJSCanvasRenderingContext2D;
     FRow, FCol: byte;
+    FBuffer: string;
     function OnKeyPress(AEvent: TJSKeyboardEvent): Boolean;
     procedure SetCanvas(AValue: string);
-    procedure Write;
+    procedure Write(data: string);
   protected
     function GetCardType: byte; override;
   public
@@ -44,9 +45,9 @@ begin
   FCanvas:=el.getContextAs2DContext('2d');
 end;
 
-procedure T6502CanvasCard.Write;
+procedure T6502CanvasCard.Write(data: string);
 begin
-  FCanvas.strokeText(GetStringPtr(2), FCol*10,FRow*10);
+  FCanvas.strokeText(data, FCol*10,FRow*10);
   Inc(FRow);
 end;
 
@@ -61,6 +62,7 @@ begin
   FCanvas:=Nil;
   FRow:=1;
   FCol:=1;
+  FBuffer:='';
 end;
 
 procedure T6502CanvasCard.CardRun;
@@ -69,11 +71,23 @@ var
 begin
   if FCanvas = Nil then
     Exit;
+  op:=Memory[1];
+  if op > 0 then
+  begin
+    if op = 10 then
+    begin
+      Write(FBuffer);
+      FBuffer:='';
+    end
+    else
+      FBuffer:=FBuffer+chr(op);
+    Memory[1]:=0;
+  end;
   op:=Memory[0];
   if op > 0 then
   begin
     case op of
-      $80: Write;
+      $80: Write(GetStringPtr(2));
     end;
     Memory[0]:=0;
   end;
