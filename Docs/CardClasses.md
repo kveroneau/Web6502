@@ -78,3 +78,7 @@ A new document will be created soon regarding the various 6502 APIs which can be
 This card is a drop-in replacement for a similar card in the *Hacker Maker Library*, this card requires that you have both jQuery and jQuery-Terminal available in your HTML source file.  It will always use the `terminal` HTML DIV ID.
 
 There is currently no interface to this card, as it uses a default DIV ID for simplicity.
+
+### TVT100Card
+
+This is a card which emulates a VT100 Terminal, you will need the required JavaScript files for this to work correctly.  As with the above card, there is also no public API for this card in ObjectPascal.  It will always use the `vt100` HTML DIV ID.

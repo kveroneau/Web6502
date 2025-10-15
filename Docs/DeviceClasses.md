@@ -158,3 +158,26 @@ I created this device as a way to sort of mimic the expansion cards from the *Ap
 ```
 
 There is really only a single property you need to use with the card slots, the 8 slots you have, you can slot in any cards into those, and the device will take care of the rest.  Currently the first slot is reserved to the primary output device, as the cards are generally initialized in order, having the output initialize first just makes sense.  The currently included ROM is made this way, although, nothing is stopping you from setting the output to card 5, and then writing a custom ROM to make slot 5 the default output.  Slot 0 as default is only a limitation of the included ROM.
+
+### T6502Storage
+
+This is a very basic storage device, it works more similar to say how SRAM worked on the NES over how a disc works.  Essentially, you would map an area of RAM to this storage device, then use a special API to have the device read the data in from the storage into this mapped RAM, and an API to have the data saved back out.  In terms of using this on a website, and where that data to be loaded and saved is stored, data is first checked for in the browser's local storage, if the data is not there, then it will load in a URL from the server.  Saving with this storage device will storage into the browser's local storage, the same place which is checked when a load operation is requested.
+
+```pascal
+  T6502Storage = class(T6502Device)
+  public
+    LoadOnStart: Boolean;
+    Filename: String;
+    Page: Byte;
+    Pages: Byte;
+  end;
+```
+
+Configuring the storage is very easy, you will need all of the options set to a valid value.
+
+  * `LoadOnStart`: Set to `True` if you'd like the storage be loaded immediately after the device starts.
+  * `Filename`: A filename to use both when requesting it from the server, and for use in the browser's local storage.
+  * `Page`: Which page in memory should be used for this storage.
+  * `Pages`: How many pages of memory will this storage use, pages are `$100` in size.
+
+For example, if you wanted memory addresses from say `$EC00` to `$EC3FF` to be stored and loaded from RAM using this device, set the page to `$EC`, and the pages to `$04`.
