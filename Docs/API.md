@@ -1,4 +1,4 @@
-yo# 6502 API
+# 6502 API
 
 This document will go through what a 6502 programmer will need to know if they plan to assemble their own website, over using the supplied C Library.  This docment will outline the existing devices and cards which are available within the package, and explains which memory addresses you will need to use for each one.  The first part of this document will be dedicated to the universal API, that is the API of the base system, which can be enabled by setting the `TMOS6502.HaltVector` address on your main CPU class.
 
