@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Web6502 Blog and Demo Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/lib/marked.umd.min.js"></script>
+  <script src="assets/6502cpu.js"></script>
+  <script src="assets/Website.js"></script>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title" id="title">Web6502 Blog and Demo Website</h1>
+      <p class="subtitle" id="modified">Loading Application, please wait...</p>
+      <div class="content" id="content"></div>
+      <div class="content" id="pasjsconsole"></div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>Web6502 SPA web application by Kevin Veroneau</p>
+    </div>
+  </footer>
+  <script>
+    rtl.showUncaughtExceptions=true;
+    window.addEventListener("load", rtl.run);
+  </script>
+</body>
+</html>
+

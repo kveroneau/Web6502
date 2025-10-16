@@ -5,7 +5,7 @@ unit blog6502;
 interface
 
 uses
-  Classes, SysUtils, Card6502, jsontable, DB, Web, marked;
+  Classes, SysUtils, Card6502, jsontable, DB, Web, marked, DateUtils;
 
 type
 
@@ -15,6 +15,7 @@ type
   private
     FTable: TJSONTable;
     procedure BlogLoaded;
+    function GetDateInfo: string;
     procedure RecLoaded(DataSet: TDataSet);
   protected
     function GetCardType: byte; override;
@@ -25,6 +26,9 @@ type
 
 implementation
 
+const
+  DATE_FORMAT = 'dddd mmmm d, yyyy "at" hh:nn';
+
 { T6502WebsiteBlogCard }
 
 procedure T6502WebsiteBlogCard.BlogLoaded;
@@ -33,10 +37,21 @@ begin
   FTable.DataSet.AfterScroll:=@RecLoaded;
 end;
 
+function T6502WebsiteBlogCard.GetDateInfo: string;
+var
+  ddiff: TDateTime;
+begin
+  Result:=FormatDateTime(DATE_FORMAT, FTable.Dates['Created']);
+  ddiff:=FTable.Dates['Modified']-FTable.Dates['Created'];
+  if ddiff >= 1.0 then
+    Result:='<b>Created on</b> '+Result+'<br/><b>Last Updated on</b> '+FormatDateTime(DATE_FORMAT, FTable.Dates['Modified']);
+end;
+
 procedure T6502WebsiteBlogCard.RecLoaded(DataSet: TDataSet);
 begin
   SysMemory.LoadString(FTable.Strings['Title']+#0, GetWord($20));
   SysMemory.LoadString(FTable.Strings['Path']+#0, GetWord($22));
+  SysMemory.LoadString(GetDateInfo+#0, GetWord($24));
 end;
 
 function T6502WebsiteBlogCard.GetCardType: byte;

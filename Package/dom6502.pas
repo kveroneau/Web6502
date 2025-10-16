@@ -69,6 +69,7 @@ begin
   begin
     case op of
       $80: FBuffer.Add(GetStringPtr(2));
+      $82: FBuffer.Clear;
     end;
     FElement.innerHTML:=FBuffer.Text;
     Memory[0]:=0;
