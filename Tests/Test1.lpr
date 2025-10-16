@@ -4,7 +4,7 @@ program Test1;
 
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
-  Memory6502, CardSlots6502, rom6502, dom6502, canvas6502;
+  Memory6502, CardSlots6502, rom6502, dom6502, canvas6502, router6502;
 
 type
 
@@ -18,6 +18,7 @@ type
     FDOM: T6502DOMOutput;
     FROM: T6502ROM;
     FCanvas: T6502CanvasCard;
+    FRouter: T6502WebRouterCard;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
@@ -35,7 +36,10 @@ begin
   FDOM.Target:='content';
   FCanvas:=T6502CanvasCard.Create(Self);
   FCanvas.CanvasID:='canvas6502';
+  FRouter:=T6502WebRouterCard.Create(Self);
   FSlots.Card[0]:=FDOM;
+  FSlots.Card[1]:=FCanvas;
+  FSlots.Card[2]:=FRouter;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.Address;
   F6502.Device:=FSlots;
@@ -50,7 +54,7 @@ begin
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
   FROM.Address:=$5000;
-  FROM.ROMFile:='vt100.bin';
+  FROM.ROMFile:='router.bin';
   FROM.OnROMLoad:=@ROMLoaded;
   FMemory.ROM[0]:=FROM;
   FROM.Active:=True;

@@ -27,6 +27,7 @@ type
     function GetWord(addr: byte): word;
     function GetString(addr: byte): string;
     function GetStringPtr(addr: byte): string;
+    procedure IRQ;
   public
     property SysMemory: T6502Memory read FSysMemory write SetSysMemory;
     property CardAddr: word read FCardAddr write FCardAddr;
@@ -38,6 +39,8 @@ type
   end;
 
 implementation
+
+procedure jsIRQ; external name 'window.cpu6502.irq';
 
 { T6502Card }
 
@@ -86,6 +89,12 @@ end;
 function T6502Card.GetStringPtr(addr: byte): string;
 begin
   Result:=SysMemory.GetStringPtr(CardAddr+addr);
+end;
+
+procedure T6502Card.IRQ;
+begin
+  SysMemory.Memory[$c80a]:=GetCardType;
+  jsIRQ;
 end;
 
 procedure T6502Card.CardRun;

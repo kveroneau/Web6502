@@ -66,6 +66,10 @@
         <Filename Value="banks6502.pas"/>
         <UnitName Value="banks6502"/>
       </Item>
+      <Item>
+        <Filename Value="router6502.pas"/>
+        <UnitName Value="router6502"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
