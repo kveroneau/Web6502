@@ -34,9 +34,6 @@ type
 
 implementation
 
-const
-  CTRL_ADDR = $ffd0;
-
 { T6502Storage }
 
 procedure T6502Storage.FileLoaded(Sender: TObject);
@@ -108,19 +105,20 @@ begin
   inherited Create(AOwner);
   FPage:=$d0;
   FPages:=2;
+  Ctrl:=$ffd0;
 end;
 
 procedure T6502Storage.DeviceRun;
 var
   op: byte;
 begin
-  op:=FMemory.Memory[CTRL_ADDR];
+  op:=FMemory.Memory[Ctrl];
   if op = $40 then
     LoadInFile
   else if op = $60 then
     SaveOutFile;
   if op > 0 then
-    FMemory.Memory[CTRL_ADDR]:=0;
+    FMemory.Memory[Ctrl]:=0;
 end;
 
 end.

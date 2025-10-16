@@ -33,7 +33,7 @@ implementation
 
 function T6502CanvasCard.OnKeyPress(AEvent: TJSKeyboardEvent): Boolean;
 begin
-  Memory[1]:=Ord(AEvent.Key[1]);
+  Memory[4]:=Ord(AEvent.Key[1]);
 end;
 
 procedure T6502CanvasCard.SetCanvas(AValue: string);

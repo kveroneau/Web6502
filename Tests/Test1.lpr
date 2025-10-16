@@ -35,13 +35,13 @@ begin
   FDOM.Target:='content';
   FCanvas:=T6502CanvasCard.Create(Self);
   FCanvas.CanvasID:='canvas6502';
-  FSlots.Card[0]:=FCanvas;
+  FSlots.Card[0]:=FDOM;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.Address;
   F6502.Device:=FSlots;
   F6502.Active:=True;
   F6502.HaltVector:=$fff0;
-  F6502.RunMode:=rmReal;
+  {F6502.RunMode:=rmReal;}
   F6502.Running:=True;
 end;
 
@@ -49,8 +49,8 @@ procedure TMyApplication.DoRun;
 begin
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
-  FROM.Address:=$f000;
-  FROM.ROMFile:='rom0';
+  FROM.Address:=$5000;
+  FROM.ROMFile:='vt100.bin';
   FROM.OnROMLoad:=@ROMLoaded;
   FMemory.ROM[0]:=FROM;
   FROM.Active:=True;

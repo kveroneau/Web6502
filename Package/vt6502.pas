@@ -33,9 +33,14 @@ procedure TVT100Card.HandleLine(const data: string);
 var
   i: Integer;
 begin
-  for i:=0 to Length(data)-1 do
-    SysMemory.Memory[FCmdBuf+i]:=ord(data[i+1]);
-  SysMemory.Memory[FCmdBuf+i+2]:=0;
+  if FTerm.Mode = tmNormal then
+  begin
+    for i:=0 to Length(data)-1 do
+      SysMemory.Memory[FCmdBuf+i]:=ord(data[i+1]);
+    SysMemory.Memory[FCmdBuf+i+2]:=0;
+  end
+  else
+    Memory[4]:=ord(data[1]);
 end;
 
 procedure TVT100Card.SyncMemory;
@@ -71,6 +76,7 @@ begin
   FTerm.OnPayload:=@HandleLine;
   FTerm.WriteLn('6502 Terminal Card Initialized.');
   FCmdBuf:=$c0a0;
+  FTerm.Mode:=tmRaw;
 end;
 
 procedure TVT100Card.CardRun;
