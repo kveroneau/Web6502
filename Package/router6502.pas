@@ -29,7 +29,7 @@ implementation
 procedure T6502WebRouterCard.HandleRoute(URL: String; aRoute: TRoute;
   Params: TStrings);
 begin
-  SysMemory.LoadString(URL, GetWord($20));
+  SysMemory.LoadString(URL+#0, GetWord($20));
   Memory[1]:=$ff;
   IRQ;
 end;

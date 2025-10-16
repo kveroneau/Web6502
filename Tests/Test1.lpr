@@ -4,7 +4,7 @@ program Test1;
 
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
-  Memory6502, CardSlots6502, rom6502, dom6502, canvas6502, router6502;
+  Memory6502, CardSlots6502, rom6502, dom6502, canvas6502, router6502, blog6502;
 
 type
 
@@ -19,6 +19,7 @@ type
     FROM: T6502ROM;
     FCanvas: T6502CanvasCard;
     FRouter: T6502WebRouterCard;
+    FBlog: T6502WebsiteBlogCard;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
@@ -37,9 +38,11 @@ begin
   FCanvas:=T6502CanvasCard.Create(Self);
   FCanvas.CanvasID:='canvas6502';
   FRouter:=T6502WebRouterCard.Create(Self);
+  FBlog:=T6502WebsiteBlogCard.Create(Self);
   FSlots.Card[0]:=FDOM;
   FSlots.Card[1]:=FCanvas;
   FSlots.Card[2]:=FRouter;
+  FSlots.Card[3]:=FBlog;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.Address;
   F6502.Device:=FSlots;
