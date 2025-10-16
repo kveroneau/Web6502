@@ -4,7 +4,7 @@
 .export __STARTUP__ : absolute = 1
 .import __HEAP_START__, __HEAP_SIZE__, __DATA_SIZE__, __DATA_LOAD__, __DATA_RUN__
 
-.import zerobss, initlib, donelib, copydata
+.import zerobss, initlib, donelib, copydata, initirq
 
 .include "zeropage.inc"
 
@@ -45,3 +45,4 @@ _init:   ldx #$ff
 _exit:   jsr donelib
          lda #$42
          sta $fff0
+         jsr initirq
