@@ -58,8 +58,8 @@ begin
     begin
       if Assigned(FCards[i]) then
       begin
-        FCards[i].SysMemory:=FMemory;
         FCards[i].CardAddr:=CARD_IO+(i*256);
+        FCards[i].SysMemory:=FMemory;
         FMemory.Memory[$c800+i]:=FCards[i].CardType;
       end
       else

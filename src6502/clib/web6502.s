@@ -1,5 +1,5 @@
 .import popax
-.export _WriteTo, _SetTo, _IdleLoop
+.export _WriteTo, _SetTo, _IdleLoop, _SetRealTime, _SetTimer
 
 .importzp ptr2
 
@@ -44,4 +44,16 @@
   lda #$41
   sta $fff0
   jmp :-
+.endproc
+
+.proc _SetRealTime: near
+  lda #$41
+  sta $fff0
+  rts
+.endproc
+
+.proc _SetTimer: near
+  lda #$40
+  sta $fff0
+  rts
 .endproc

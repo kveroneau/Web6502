@@ -60,9 +60,9 @@ procedure T6502Card.SetSysMemory(AValue: T6502Memory);
 begin
   if FSysMemory=AValue then Exit;
   FMemory:=AValue;
+  FSysMemory:=AValue;
   if Assigned(FMemory) and Assigned(FOnInitCard) then
     FOnInitCard(Self);
-  FSysMemory:=AValue;
 end;
 
 function T6502Card.GetCardType: byte;

@@ -4,7 +4,8 @@ program Website;
 
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
-  Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502;
+  Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, Status6502,
+  DeviceHub6502;
 
 type
 
@@ -21,6 +22,8 @@ type
     FROM: T6502ROM;
     FRouter: T6502WebRouterCard;
     FBlog: T6502WebsiteBlogCard;
+    FStatus: T6502StatusDevice;
+    FHub: T6502DeviceHub;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
@@ -47,9 +50,13 @@ begin
   FSlots.Card[2]:=FRouter;
   FSlots.Card[3]:=FBlog;
   FSlots.Card[4]:=FModified;
+  FStatus:=T6502StatusDevice.Create(Self);
+  FHub:=T6502DeviceHub.Create(Self);
+  FHub.Device[0]:=FSlots;
+  FHub.Device[1]:=FStatus;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.Address;
-  F6502.Device:=FSlots;
+  F6502.Device:=FHub;
   F6502.Active:=True;
   F6502.HaltVector:=$fff0;
   {F6502.RunMode:=rmReal;}

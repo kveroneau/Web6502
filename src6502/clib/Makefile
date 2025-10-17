@@ -1,4 +1,4 @@
-SOURCES = crt0.s write.s web6502.s irq.s
+SOURCES = crt0.s write.s web6502.s irq.s blog6502.s router6502.s
 
 LIBRARY = web6502.lib
 
