@@ -5,7 +5,7 @@ program Test3;
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
   Memory6502, CardSlots6502, rom6502, vt6502, storage6502, DeviceHub6502,
-  banks6502;
+  banks6502, cffa6502;
 
 type
 
@@ -21,6 +21,7 @@ type
     FStorage: T6502Storage;
     FHub: T6502DeviceHub;
     FBanks: T6502BankedMemory;
+    FCFFA1: T6502CFFA1Card;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
@@ -33,7 +34,9 @@ begin
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);
   FTerm:=TVT100Card.Create(Self);
+  FCFFA1:=T6502CFFA1Card.Create(Self);
   FSlots.Card[0]:=FTerm;
+  FSlots.Card[1]:=FCFFA1;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.Address;
   FHub.Device[1]:=FSlots;
@@ -43,6 +46,7 @@ begin
   FHub.Device[2]:=FBanks;
   F6502.Device:=FHub;
   F6502.Active:=True;
+  FCFFA1.Compatibility:=True;
   F6502.HaltVector:=$fff0;
   F6502.RunMode:=rmReal;
   F6502.Running:=True;
