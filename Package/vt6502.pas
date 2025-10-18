@@ -16,6 +16,7 @@ type
     FTerm: TWebTerminal;
     FCmdBuf: word;
     procedure HandleLine(const data: string);
+    procedure HandleCtrl(const data: string);
     procedure SyncMemory;
     procedure DoPrompt;
   published
@@ -26,6 +27,8 @@ type
   end;
 
 implementation
+
+procedure jsIRQ; external name 'window.cpu6502.irq';
 
 { TVT100Card }
 
@@ -41,6 +44,13 @@ begin
   end
   else
     Memory[4]:=ord(data[1]);
+end;
+
+procedure TVT100Card.HandleCtrl(const data: string);
+begin
+  Memory[5]:=ord(data[1]);
+  if data = 'C' then
+    jsIRQ;
 end;
 
 procedure TVT100Card.SyncMemory;
@@ -59,6 +69,7 @@ end;
 
 procedure TVT100Card.DoPrompt;
 begin
+  FTerm.Mode:=tmNormal;
   FTerm.Prompt:=GetStringPtr(2);
   FCmdBuf:=GetWord(4);
   FTerm.EnableInput;
@@ -74,6 +85,7 @@ begin
   inherited Create(AOwner);
   FTerm:=TWebTerminal.Create;
   FTerm.OnPayload:=@HandleLine;
+  FTerm.OnControlCode:=@HandleCtrl;
   FTerm.WriteLn('6502 Terminal Card Initialized.');
   FCmdBuf:=$c0a0;
   FTerm.Mode:=tmRaw;
@@ -100,6 +112,10 @@ begin
     $80: FTerm.Write(GetStringPtr(2));
     $81: DoPrompt;
     $82: FTerm.Clear;
+    $90: FTerm.Write(IntToHex(Memory[2], 2));
+    $91: FTerm.Write(IntToHex(GetWord(2), 4));
+    $92: FTerm.Write(IntToHex(SysMemory.Memory[GetWord(2)], 2));
+    $93: FTerm.Write(IntToHex(SysMemory.GetWord(GetWord(2)), 4));
   end;
   Memory[0]:=0;
 end;

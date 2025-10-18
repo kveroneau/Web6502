@@ -16,6 +16,7 @@ type
     F6502: TMOS6502;
     FMemory: T6502Memory;
     FROM: T6502ROM;
+    FLib: T6502ROM;
     FSlots: T6502CardSlots;
     FTerm: TVT100Card;
     FStorage: T6502Storage;
@@ -30,6 +31,11 @@ type
 
 procedure TMyApplication.ROMLoaded(Sender: TObject);
 begin
+  {if not FLib.Active then
+  begin
+    FLib.OnROMLoad:=@ROMLoaded;
+    Exit;
+  end;}
   FMemory.Active:=True;
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);
@@ -48,19 +54,34 @@ begin
   F6502.Active:=True;
   FCFFA1.Compatibility:=True;
   F6502.HaltVector:=$fff0;
-  F6502.RunMode:=rmReal;
+  {F6502.RunMode:=rmReal;}
   F6502.Running:=True;
 end;
 
 procedure TMyApplication.DoRun;
+var
+  cnt: Integer;
 begin
+  cnt:=GetEnvironmentVariableCount;
+  WriteLn('Environment Count: ', cnt);
+  WriteLn(EnvironmentVariable['rom']);
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
   FROM.Address:=$5000;
   FROM.ROMFile:='vt100.bin';
+  if (cnt = 1) and (GetEnvironmentString(0) <> '') then
+  begin
+    if EnvironmentVariable['rom'] <> '' then
+      FROM.ROMFile:=EnvironmentVariable['rom'];
+  end;
   FROM.OnROMLoad:=@ROMLoaded;
   FMemory.ROM[0]:=FROM;
   FROM.Active:=True;
+  FLib:=T6502ROM.Create(Self);
+  FLib.Address:=$6000;
+  FLib.ROMFile:='clib.SYS';
+  FMemory.ROM[1]:=FLib;
+  FLib.Active:=False;
   FHub:=T6502DeviceHub.Create(Self);
   FStorage:=T6502Storage.Create(Self);
   FStorage.Filename:='test.bin';
