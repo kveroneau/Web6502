@@ -108,9 +108,9 @@ ACIAout
 ; byte in from Replica 1/Apple 1 keyboard
 
 ACIAin
-:   JSR syncit
+    JSR syncit
 	LDA	$C004
-	BEQ :-
+	BEQ LAB_nobyw
 	PHA
     LDA #0
     STA $C004
@@ -328,8 +328,12 @@ GetLine:
         LDX  #0                 ; Initialize index into buffer
 loop:
         JSR  ACIAin		; Get character from keyboard
+        BCC loop
+        ;STA $800
         CMP  #LF                ; <Enter> key pressed?
         BEQ  EnterPressed       ; If so, handle it
+        CMP  #$7F
+        BEQ  BackSpace
         STA  $C001
         STA  IN+1,X             ; Store character in buffer (skip first length byte)
         INX                     ; Advance index into buffer
@@ -342,6 +346,13 @@ EnterPressed:
         STA  IN+1,X             ; Store 0 at end of buffer
         STX  IN                 ; Store length of string
         RTS                     ; Return
+BackSpace:
+        DEX
+        LDA #'D'
+        STA $C00A
+        LDA #'s'
+        STA $C00A
+        JMP loop
 
 BRK_Handler:
         STA  $20

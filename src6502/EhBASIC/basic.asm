@@ -958,8 +958,12 @@ LAB_INLN
 
 					; $08 as delete key (BACKSPACE on standard keyboard)
 LAB_134B
-	JSR	LAB_PRNA		; go print the character
+	;JSR	LAB_PRNA		; go print the character
 	DEX				; decrement the buffer counter (delete)
+	LDA #'D'
+	STA $C00A
+	LDA #'s'
+	STA $C00A
 	.byte	$2C			; make LDX into BIT abs
 
 ; call for BASIC input (main entry point)
@@ -987,14 +991,18 @@ LAB_1359
 	BCC	LAB_1359		; if < ignore character
 
 LAB_1374
-	CMP	#$08			; compare with [BACKSPACE] (delete last character)
+	CMP	#$7F			; compare with [BACKSPACE] (delete last character)
 	BEQ	LAB_134B		; go delete last character
 
 LAB_1378
 	CPX	#Ibuffe-Ibuffs	; compare character count with max
 	BCS	LAB_138E		; skip store and do [BELL] if buffer full
 
-	STA	Ibuffs,X		; else store in buffer
+	CMP #$61
+	BCC :+
+	SBC #$20
+
+:	STA	Ibuffs,X		; else store in buffer
 	INX				; increment pointer
 LAB_137F
     JSR LAB_PRNA
