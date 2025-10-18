@@ -104,6 +104,12 @@ begin
       FTerm.Write(chr(op));
     Memory[1]:=0;
   end;
+  op:=Memory[$a];
+  if op > 0 then
+  begin
+    FTerm.Csi(chr(op));
+    Memory[$a]:=0;
+  end;
   op:=Memory[0];
   if op = 0 then
     Exit;
