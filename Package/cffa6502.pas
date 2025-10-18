@@ -104,7 +104,10 @@ begin
     SEC
   end
   else
+  begin
+    SysMemory.SetWord($09, Length(data));
     SysMemory.LoadString(data, dest);
+  end;
 end;
 
 procedure T6502CFFA1Card.SaveZP;
