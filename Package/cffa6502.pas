@@ -91,13 +91,20 @@ end;
 
 procedure T6502CFFA1Card.CFFA1LoadFile;
 var
-  title, data: string;
+  title, data, datax: string;
   dest: word;
 begin
   dest:=SysMemory.GetWord($00);
   title:=SysMemory.GetString(SysMemory.GetWord($02)+1);
   data:=window.localStorage.getItem(title);
-  SysMemory.LoadString(data, dest);
+  datax:=data+'x';
+  if datax = 'nullx' then
+  begin
+    FCFFAError:='?FILE NOT FOUND';
+    SEC
+  end
+  else
+    SysMemory.LoadString(data, dest);
 end;
 
 procedure T6502CFFA1Card.SaveZP;
@@ -127,7 +134,7 @@ begin
   if op = 0 then
     Exit;
   case op of
-    $04: WriteOut(FCFFAError);
+    $04: WriteOut(#$a#$d+FCFFAError);
     $10: FCFIdx:=0;
     $12: CFFA1ReadDir;
     $20: CFFA1SaveFile;
