@@ -5,7 +5,7 @@ program Test3;
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
   Memory6502, CardSlots6502, rom6502, vt6502, storage6502, DeviceHub6502,
-  banks6502, cffa6502;
+  banks6502, cffa6502, webdisk6502;
 
 type
 
@@ -16,35 +16,34 @@ type
     F6502: TMOS6502;
     FMemory: T6502Memory;
     FROM: T6502ROM;
-    FLib: T6502ROM;
     FSlots: T6502CardSlots;
     FTerm: TVT100Card;
     FStorage: T6502Storage;
     FHub: T6502DeviceHub;
     FBanks: T6502BankedMemory;
     FCFFA1: T6502CFFA1Card;
+    FDisk: T6502WebDisk;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
   public
   end;
 
+{$R ROM0.bin}
+
 procedure TMyApplication.ROMLoaded(Sender: TObject);
 begin
-  {if not FLib.Active then
-  begin
-    FLib.OnROMLoad:=@ROMLoaded;
-    Exit;
-  end;}
   FMemory.Active:=True;
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);
   FTerm:=TVT100Card.Create(Self);
   FCFFA1:=T6502CFFA1Card.Create(Self);
+  FDisk:=T6502WebDisk.Create(Self);
   FSlots.Card[0]:=FTerm;
   FSlots.Card[1]:=FCFFA1;
+  FSlots.Card[6]:=FDisk;
   F6502.Memory:=FMemory;
-  F6502.ResetVector:=FROM.Address;
+  F6502.ResetVector:=FROM.RST_VEC;
   FHub.Device[1]:=FSlots;
   FBanks:=T6502BankedMemory.Create(Self);
   FBanks.BankPage:=$a0;
@@ -63,12 +62,10 @@ var
   cnt: Integer;
 begin
   cnt:=GetEnvironmentVariableCount;
-  WriteLn('Environment Count: ', cnt);
-  WriteLn(EnvironmentVariable['rom']);
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
-  FROM.Address:=$5000;
-  FROM.ROMFile:='vt100.bin';
+  FROM.Address:=$f000;
+  FROM.ROMFile:='rom0';
   if (cnt = 1) and (GetEnvironmentString(0) <> '') then
   begin
     if EnvironmentVariable['rom'] <> '' then
@@ -76,17 +73,12 @@ begin
   end;
   FROM.OnROMLoad:=@ROMLoaded;
   FMemory.ROM[0]:=FROM;
-  FROM.Active:=True;
-  FLib:=T6502ROM.Create(Self);
-  FLib.Address:=$6000;
-  FLib.ROMFile:='clib.SYS';
-  FMemory.ROM[1]:=FLib;
-  FLib.Active:=False;
   FHub:=T6502DeviceHub.Create(Self);
   FStorage:=T6502Storage.Create(Self);
   FStorage.Filename:='test.bin';
-  FStorage.LoadOnStart:=True;
+  FStorage.LoadOnStart:=False;
   FHub.Device[0]:=FStorage;
+  FROM.Active:=True;
 end;
 
 var

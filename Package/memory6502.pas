@@ -121,7 +121,6 @@ procedure T6502Memory.LoadInto(strm: TStream; addr: word);
 var
   buf: TBytes;
 begin
-  WriteLn('Loading data into ',addr);
   strm.Read(buf, strm.Size-strm.Position);
   jsWriteMemory(addr, buf, False);
 end;

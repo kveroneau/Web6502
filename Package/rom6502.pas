@@ -20,12 +20,14 @@ type
     FOnROMLoad: TNotifyEvent;
     procedure ROMLoaded(Sender: TObject);
     procedure SetActive(AValue: Boolean);
+    function GetRST: word;
   public
     property Active: Boolean read FActive write SetActive;
     property Address: word read FAddress write FAddress;
     property ROMFile: string read FROMFile write FROMFile;
     property ROMStream: TBytesStream read FROMStream write FROMStream;
     property OnROMLoad: TNotifyEvent read FOnROMLoad write FOnROMLoad;
+    property RST_VEC: word read GetRST;
     destructor Destroy; override;
   end;
 
@@ -66,6 +68,19 @@ begin
     FreeAndNil(FROMStream);
     FActive:=AValue;
   end;
+end;
+
+function T6502ROM.GetRST: word;
+var
+  hdr: string;
+  i: Integer;
+begin
+  Result:=FAddress;
+  hdr:='';
+  for i:=5 to 11 do
+    hdr:=hdr+chr(FROMStream.Bytes[i]);
+  if hdr = 'WebROM$' then
+    Result:=FAddress+FROMStream.Bytes[0];
 end;
 
 destructor T6502ROM.Destroy;

@@ -82,6 +82,10 @@
         <Filename Value="cffa6502.pas"/>
         <UnitName Value="cffa6502"/>
       </Item>
+      <Item>
+        <Filename Value="webdisk6502.pas"/>
+        <UnitName Value="webdisk6502"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
