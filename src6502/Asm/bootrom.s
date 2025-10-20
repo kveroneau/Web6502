@@ -1,4 +1,4 @@
-.import __CARD_START__, __CARDIO__
+.import __CARD_START__, __CARDIO__, __RAM0_START__
 
 OUTPUT = __CARD_START__
 OUT_BUF = OUTPUT+2
@@ -11,6 +11,8 @@ DISK_ADR = DISK+4
 
 OUT_TYP = __CARDIO__
 DISK_TYP = __CARDIO__+6
+
+BIN_ADDR = $5000
 
 .rodata
 
@@ -40,7 +42,11 @@ ptr: .res 2, $00
   sta DISK_BUF
   lda #>bootfile
   sta DISK_BUF+1
-  lda #$d4
+  lda #<__RAM0_START__
+  sta DISK_ADR
+  lda #>__RAM0_START__
+  sta DISK_ADR+1
+  lda #$d2
   sta DISK
 : lda DISK
   bne :-
@@ -56,7 +62,10 @@ ptr: .res 2, $00
 .proc _bootsys: near
   lda DISK_TYP
   jsr _webdisk
-  lda #<OUT_TYP
+  lda BIN_ADDR
+  beq :+
+  jmp BIN_ADDR
+: lda #<OUT_TYP
   sta ptr
   lda #>OUT_TYP
   sta ptr+1

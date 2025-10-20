@@ -5,7 +5,7 @@ program Website;
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
   Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, Status6502,
-  DeviceHub6502;
+  DeviceHub6502, storage6502;
 
 type
 
@@ -24,17 +24,25 @@ type
     FBlog: T6502WebsiteBlogCard;
     FStatus: T6502StatusDevice;
     FHub: T6502DeviceHub;
+    FBlogBin: T6502Storage;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
   public
   end;
 
+{$R ROM0.bin}
+
 { TWeb6502Site }
 
 procedure TWeb6502Site.ROMLoaded(Sender: TObject);
 begin
   FMemory.Active:=True;
+  FBlogBin:=T6502Storage.Create(Self);
+  FBlogBin.Filename:='blog.bin';
+  FBlogBin.Page:=$50;
+  FBlogBin.Pages:=2;
+  FBlogBin.LoadOnStart:=True;
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);
   FDOM:=T6502DOMOutput.Create(Self);
@@ -54,8 +62,9 @@ begin
   FHub:=T6502DeviceHub.Create(Self);
   FHub.Device[0]:=FSlots;
   FHub.Device[1]:=FStatus;
+  FHub.Device[2]:=FBlogBin;
   F6502.Memory:=FMemory;
-  F6502.ResetVector:=FROM.Address;
+  F6502.ResetVector:=FROM.RST_VEC;
   F6502.Device:=FHub;
   F6502.Active:=True;
   F6502.HaltVector:=$fff0;
@@ -67,8 +76,8 @@ procedure TWeb6502Site.DoRun;
 begin
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
-  FROM.Address:=$5000;
-  FROM.ROMFile:='blog.bin';
+  FROM.Address:=$f000;
+  FROM.ROMFile:='rom0';
   FROM.OnROMLoad:=@ROMLoaded;
   FMemory.ROM[0]:=FROM;
   FROM.Active:=True;
