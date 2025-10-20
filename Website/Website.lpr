@@ -19,6 +19,7 @@ type
     FDOM: T6502DOMOutput;
     FTitle: T6502DOMOutput;
     FModified: T6502DOMOutput;
+    FCtrl: T6502DOMOutput;
     FROM: T6502ROM;
     FRouter: T6502WebRouterCard;
     FBlog: T6502WebsiteBlogCard;
@@ -51,6 +52,8 @@ begin
   FTitle.Target:='title';
   FModified:=T6502DOMOutput.Create(Self);
   FModified.Target:='modified';
+  FCtrl:=T6502DOMOutput.Create(Self);
+  FCtrl.Target:='blogctl';
   FRouter:=T6502WebRouterCard.Create(Self);
   FBlog:=T6502WebsiteBlogCard.Create(Self);
   FSlots.Card[0]:=FDOM;
@@ -58,6 +61,7 @@ begin
   FSlots.Card[2]:=FRouter;
   FSlots.Card[3]:=FBlog;
   FSlots.Card[4]:=FModified;
+  FSlots.Card[5]:=FCtrl;
   FStatus:=T6502StatusDevice.Create(Self);
   FHub:=T6502DeviceHub.Create(Self);
   FHub.Device[0]:=FSlots;

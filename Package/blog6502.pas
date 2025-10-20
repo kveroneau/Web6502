@@ -17,6 +17,7 @@ type
     procedure BlogLoaded;
     function GetDateInfo: string;
     procedure RecLoaded(DataSet: TDataSet);
+    procedure DoLocate;
   protected
     function GetCardType: byte; override;
   public
@@ -54,6 +55,14 @@ begin
   SysMemory.LoadString(GetDateInfo+#0, GetWord($24));
 end;
 
+procedure T6502WebsiteBlogCard.DoLocate;
+begin
+  if FTable.DataSet.Locate(GetStringPtr(2), GetStringPtr(4), []) then
+    Memory[1]:=$7f
+  else
+    Memory[1]:=$ff;
+end;
+
 function T6502WebsiteBlogCard.GetCardType: byte;
 begin
   Result:=$8f;
@@ -82,6 +91,7 @@ begin
     $13: FTable.DataSet.Prior;
     $20: FTable.Filter:='';
     $21: FTable.Filter:=GetStringPtr(2)+'='+QuotedStr(GetStringPtr(4));
+    $22: DoLocate;
     $80: document.getElementById(GetStringPtr(2)).innerHTML:=markdown(FTable.Strings['Content']);
   end;
   Memory[0]:=0;

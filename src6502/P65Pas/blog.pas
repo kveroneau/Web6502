@@ -49,9 +49,29 @@ begin
   api:=$80;
 end; 
 
+procedure SetCtl(s: pointer absolute $c502);
+var
+  api: byte absolute $c500;
+begin
+  api:=$82;
+  api:=$80;
+end; 
+
 procedure SetFilter(field: pointer absolute $c302; value: pointer absolute $c304);
 begin
   BAPI:=$21;
+end; 
+
+procedure Locate(field: pointer absolute $c302; value: pointer absolute $c304): boolean;
+var
+  BR: byte absolute $c301;
+begin
+  BAPI:=$22;
+  if BR = $7f then
+    Exit(True);
+  elsif BR = $ff then
+    Exit(False);
+  end; 
 end; 
 
 procedure PushBlog(s: pointer absolute $c202);
@@ -61,13 +81,57 @@ begin
   api2:=$40;  
 end; 
 
-procedure LoadBlog(path: pointer);
+procedure strcmp(s1, s2: pointer): boolean;
+var
+  p1: pointer absolute $20;
+  p2: pointer absolute $22;
 begin
-  SetFilter(@'Path', path);
+  p1:=s1;
+  p2:=s2;
+  asm 
+	  LDY #0
+loop1:
+    LDA (p1), Y
+    BEQ eq1
+    CMP (p2), Y
+    BNE ne1
+    INY
+    BNE loop1
+ne1:
+    LDA #$00
+    RTS
+eq1:
+    LDA #$ff
+  end; 
+end; 
+
+procedure ShowEntry;
+begin
   TWrite(@BlogTitle);
   MWrite(@BlogDate);
   BCONTENT:=@'content';
   BAPI:=$80;
+  SetCtl(@'<a href="#/__prior">Previous</a> | <a href="#/__next">Next</a>');
+end; 
+
+procedure LoadBlog(path: pointer);
+begin
+  if Locate(@'Path', path) then
+    ShowEntry;
+  elsif strcmp(path, @'/__next') then
+    BAPI:=$12;
+    PushBlog(@BlogPath);
+    ShowEntry;
+  elsif strcmp(path, @'/__prior') then
+    BAPI:=$13;
+    PushBlog(@BlogPath);
+    ShowEntry;
+  else
+    TWrite(@'Page Not Found');
+    MWrite(@'Web6502 Blog could not find that path.');
+    OUT:=$82;
+    Write(@'Return to <a href="#/index">index</a>?');
+  end;
 end; 
 
 procedure SysCall;
