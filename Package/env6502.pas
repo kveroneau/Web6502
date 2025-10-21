@@ -34,7 +34,7 @@ var
   idx: integer;
 begin
   env:=GetStringPtr(2);
-  idx:=FVars.IndexOf(env);
+  idx:=FVars.IndexOfName(env);
   if idx = -1 then
   begin
     Memory[1]:=$ff;
