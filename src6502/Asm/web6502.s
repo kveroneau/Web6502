@@ -70,7 +70,7 @@ canvascard:
   .byte "   - HTML5 Canvas Card", $0
 
 envrun:
-  .byte "run", $0
+  .byte "boot", $0
 
 loadingmsg:
   .byte " * Loading: ", $0
