@@ -24,6 +24,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     procedure CardRun; override;
+    procedure Write(const data: string);
+    procedure WriteLn(const data: string);
   end;
 
 implementation
@@ -124,6 +126,16 @@ begin
     $93: FTerm.Write(IntToHex(SysMemory.GetWord(GetWord(2)), 4));
   end;
   Memory[0]:=0;
+end;
+
+procedure TVT100Card.Write(const data: string);
+begin
+  FTerm.Write(data);
+end;
+
+procedure TVT100Card.WriteLn(const data: string);
+begin
+  FTerm.WriteLn(data);
 end;
 
 end.

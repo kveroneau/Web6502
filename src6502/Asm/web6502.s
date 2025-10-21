@@ -69,6 +69,9 @@ routercard:
 canvascard:
   .byte "   - HTML5 Canvas Card", $0
 
+tablecard:
+  .byte "   - Data Table Card", $0
+
 envrun:
   .byte "boot", $0
 
@@ -164,6 +167,11 @@ startmsg:
   bne :+
   lda #<canvascard
   ldx #>canvascard
+  jmp print_slot
+: cmp #$da
+  bne :+
+  lda #<tablecard
+  ldx #>tablecard
   jmp print_slot
 : lda #<unknownmsg
   ldx #>unknownmsg
