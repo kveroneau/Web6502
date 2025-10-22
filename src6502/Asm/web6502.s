@@ -10,6 +10,8 @@ OUT_TYP = __CARDIO__
 
 BIN_ADDR = $5000
 
+BIN_FILE = $ff00
+
 .zeropage
 
 DISK: .res 2, $00
@@ -83,6 +85,9 @@ failmsg:
 
 startmsg:
   .byte ", starting program...", $0
+
+bootfail:
+  .byte " *** Could not determine how to boot 6502 system. ***", $0
 
 .code
 
@@ -215,6 +220,24 @@ startmsg:
   rts
 .endproc
 
+.proc start_ldr: near
+  ldy #0
+  lda #$d2
+  sta (DISK), Y
+: lda (DISK), Y
+  bne :-
+  iny
+  lda (DISK), Y
+  bne :+
+  lda #<startmsg
+  ldx #>startmsg
+  jsr _println
+  jmp BIN_ADDR
+: lda #<failmsg
+  ldx #>failmsg
+  jmp _println
+.endproc
+
 .proc check_env: near
   ldy #2
   lda #<envrun
@@ -254,21 +277,33 @@ startmsg:
   sta (DISK), Y
   lda #$80
   sta OUTPUT
-  ldy #0
-  lda #$d2
-  sta (DISK), Y
-: lda (DISK), Y
-  bne :-
-  iny
-  lda (DISK), Y
+  jmp start_ldr
+.endproc
+
+.proc check_ldr: near
+  lda BIN_FILE
   bne :+
-  lda #<startmsg
-  ldx #>startmsg
-  jsr _println
-  jmp BIN_ADDR
-: lda #<failmsg
-  ldx #>failmsg
-  jmp _println
+  rts
+: lda #<loadingmsg
+  ldx #>loadingmsg
+  jsr _print
+  ldy #2
+  lda #<BIN_FILE
+  sta (DISK), Y
+  sta OUT_BUF
+  iny
+  lda #>BIN_FILE
+  sta (DISK), Y
+  sta OUT_BUF+1
+  iny
+  lda #<BIN_ADDR
+  sta (DISK), Y
+  iny
+  lda #>BIN_ADDR
+  sta (DISK), Y
+  lda #$80
+  sta OUTPUT
+  jmp start_ldr
 .endproc
 
 .proc _main: near
@@ -282,7 +317,11 @@ startmsg:
   lda ENV+1
   beq :+
   jsr check_env
-: rts
+: jsr check_ldr
+  lda #<bootfail
+  ldx #>bootfail
+  jsr _println
+  rts
 .endproc
 
 .segment "STARTUP"

@@ -5,7 +5,7 @@ program Website;
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
   Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, Status6502,
-  DeviceHub6502, storage6502;
+  DeviceHub6502, storage6502, webdisk6502;
 
 type
 
@@ -26,6 +26,7 @@ type
     FStatus: T6502StatusDevice;
     FHub: T6502DeviceHub;
     FBlogBin: T6502Storage;
+    FDisk: T6502WebDisk;
     procedure ROMLoaded(Sender: TObject);
   protected
     procedure DoRun; override;
@@ -43,7 +44,8 @@ begin
   FBlogBin.Filename:='blog.bin';
   FBlogBin.Page:=$50;
   FBlogBin.Pages:=2;
-  FBlogBin.LoadOnStart:=True;
+  FBlogBin.LoadOnStart:=False;
+  FDisk:=T6502WebDisk.Create(Self);
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);
   FDOM:=T6502DOMOutput.Create(Self);
@@ -62,6 +64,7 @@ begin
   FSlots.Card[3]:=FBlog;
   FSlots.Card[4]:=FModified;
   FSlots.Card[5]:=FCtrl;
+  FSlots.Card[6]:=FDisk;
   FStatus:=T6502StatusDevice.Create(Self);
   FHub:=T6502DeviceHub.Create(Self);
   FHub.Device[0]:=FSlots;
@@ -73,6 +76,7 @@ begin
   F6502.Active:=True;
   F6502.HaltVector:=$fff0;
   {F6502.RunMode:=rmReal;}
+  FMemory.LoadString('blog.bin'+#0, $ff00);
   F6502.Running:=True;
 end;
 
