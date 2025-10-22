@@ -16,6 +16,9 @@ type
     F6502: TMOS6502;
     FMemory: T6502Memory;
     FROM: T6502ROM;
+    {$IFDEF TESTROM}
+    FTestROM: T6502ROM;
+    {$ENDIF}
     FSlots: T6502CardSlots;
     FTerm: TVT100Card;
     FCFFA1: T6502CFFA1Card;
@@ -28,6 +31,9 @@ type
   end;
 
 {$R ROM0.bin}
+{$IFDEF TESTROM}
+{$R ROM1.bin}
+{$ENDIF}
 
 { TWeb6502Terminal }
 
@@ -39,6 +45,13 @@ begin
   FROM.ROMFile:='rom0';
   FROM.Active:=True;
   FMemory.ROM[0]:=FROM;
+  {$IFDEF TESTROM}
+  FTestROM:=T6502ROM.Create(Self);
+  FTestROM.Address:=$f100;
+  FTestROM.ROMFile:='rom1';
+  FTestROM.Active:=True;
+  FMemory.ROM[1]:=FTestROM;
+  {$ENDIF}
   FMemory.Active:=True;
   F6502:=TMOS6502.Create(Self);
   FSlots:=T6502CardSlots.Create(Self);

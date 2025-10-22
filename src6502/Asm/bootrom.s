@@ -1,4 +1,4 @@
-.import __CARD_START__, __CARDIO__, __RAM0_START__
+.import __CARD_START__, __CARDIO__, __RAM0_START__, __ROM1_START__
 
 OUTPUT = __CARD_START__
 OUT_BUF = OUTPUT+2
@@ -90,6 +90,14 @@ ptr: .res 2, $00
 
 .segment "STARTUP"
 
+chkrom:
+  lda __ROM1_START__
+  beq :+
+  sta romjsr+1
+romjsr:
+  jsr __ROM1_START__
+: rts
+
 res_vec:
 ldx #$FF
 txs
@@ -97,6 +105,7 @@ cld
 lda #<welcomemsg
 ldx #>welcomemsg
 jsr _print
+jsr chkrom
 jmp _bootsys
 
 .segment "HEADER"

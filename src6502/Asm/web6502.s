@@ -1,4 +1,4 @@
-.import __CARD_START__, __CARDIO__, __ROM0_START__
+.import __CARD_START__, __CARDIO__, __ROM0_START__, __RAM3_START__
 
 _print = __ROM0_START__+2
 print = __ROM0_START__+3
@@ -88,6 +88,9 @@ startmsg:
 
 bootfail:
   .byte " *** Could not determine how to boot 6502 system. ***", $0
+
+kernsys:
+  .byte "KERNEL.SYS", $0
 
 .code
 
@@ -220,7 +223,7 @@ bootfail:
   rts
 .endproc
 
-.proc start_ldr: near
+start_ldr:
   ldy #0
   lda #$d2
   sta (DISK), Y
@@ -232,11 +235,11 @@ bootfail:
   lda #<startmsg
   ldx #>startmsg
   jsr _println
+jmpldr:
   jmp BIN_ADDR
 : lda #<failmsg
   ldx #>failmsg
   jmp _println
-.endproc
 
 .proc check_env: near
   ldy #2
@@ -306,6 +309,31 @@ bootfail:
   jmp start_ldr
 .endproc
 
+.proc kernel: near
+  lda #<loadingmsg
+  ldx #>loadingmsg
+  jsr _print
+  ldy #2
+  lda #<kernsys
+  sta (DISK), Y
+  sta OUT_BUF
+  iny
+  lda #>kernsys
+  sta (DISK), Y
+  sta OUT_BUF+1
+  iny
+  lda #<__RAM3_START__
+  sta (DISK), Y
+  sta jmpldr+1
+  iny
+  lda #>__RAM3_START__
+  sta (DISK), Y
+  sta jmpldr+2
+  lda #$80
+  sta OUTPUT
+  jmp start_ldr
+.endproc
+
 .proc _main: near
   jsr newline
   lda #<welcomemsg
@@ -313,12 +341,15 @@ bootfail:
   jsr _println
   jsr scan_cards
   lda DISK+1
-  beq :+
+  beq :++
   lda ENV+1
   beq :+
   jsr check_env
-: jsr check_ldr
-  lda #<bootfail
+: lda DISK+1
+  beq :+
+  jsr check_ldr
+  jmp kernel
+: lda #<bootfail
   ldx #>bootfail
   jsr _println
   rts
