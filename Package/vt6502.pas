@@ -19,6 +19,7 @@ type
     procedure HandleCtrl(const data: string);
     procedure SyncMemory;
     procedure DoPrompt;
+    procedure SetRAWMode;
   published
     function GetCardType: byte; override;
   public
@@ -40,9 +41,9 @@ var
 begin
   if FTerm.Mode = tmNormal then
   begin
-    for i:=0 to Length(data)-1 do
-      SysMemory.Memory[FCmdBuf+i]:=ord(data[i+1]);
-    SysMemory.Memory[FCmdBuf+i+2]:=0;
+    for i:=1 to Length(data) do
+      SysMemory.Memory[FCmdBuf+i-1]:=ord(data[i]);
+    SysMemory.Memory[FCmdBuf+i]:=0;
   end
   else
     Memory[4]:=ord(data[1]);
@@ -74,6 +75,12 @@ begin
   FTerm.Mode:=tmNormal;
   FTerm.Prompt:=GetStringPtr(2);
   FCmdBuf:=GetWord(4);
+  FTerm.EnableInput;
+end;
+
+procedure TVT100Card.SetRAWMode;
+begin
+  FTerm.Mode:=tmRaw;
   FTerm.EnableInput;
 end;
 
@@ -120,6 +127,7 @@ begin
     $80: FTerm.Write(GetStringPtr(2));
     $81: DoPrompt;
     $82: FTerm.Clear;
+    $8a: SetRAWMode;
     $90: FTerm.Write(IntToHex(Memory[2], 2));
     $91: FTerm.Write(IntToHex(GetWord(2), 4));
     $92: FTerm.Write(IntToHex(SysMemory.Memory[GetWord(2)], 2));
