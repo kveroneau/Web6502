@@ -13,14 +13,15 @@ type
 
   T6502DOMOutput = class(T6502Card)
   private
-    FBuffer: TStringList;
+    FBuffer, FElements: TStringList;
     FElement: TJSHTMLElement;
     FLineBuf: string;
-    procedure SetElement(AValue: string);
+    FCurElem: Integer;
+    procedure SetElement;
   protected
     function GetCardType: byte; override;
   public
-    property Target: string write SetElement;
+    procedure AddElement(AElement: string);
     constructor Create(AOwner: TComponent); override;
     procedure CardRun; override;
   end;
@@ -29,14 +30,33 @@ implementation
 
 { T6502DOMOutput }
 
-procedure T6502DOMOutput.SetElement(AValue: string);
+procedure T6502DOMOutput.SetElement;
+var
+  i: Integer;
 begin
-  FElement:=TJSHTMLElement(document.getElementById(AValue));
+  i:=Memory[$e0];
+  if i > FElements.Count then
+    FCurElem:=FElements.Count
+  else
+    FCurElem:=i;
+  FElement:=TJSHTMLElement(document.getElementById(FElements.Strings[FCurElem]));
 end;
 
 function T6502DOMOutput.GetCardType: byte;
 begin
   Result:=$80;
+end;
+
+procedure T6502DOMOutput.AddElement(AElement: string);
+var
+  i: Integer;
+begin
+  i:=FElements.Add(AElement);
+  if FCurElem = -1 then
+  begin
+    FCurElem:=i;
+    FElement:=TJSHTMLElement(document.getElementById(FElements.Strings[FCurElem]));
+  end;
 end;
 
 constructor T6502DOMOutput.Create(AOwner: TComponent);
@@ -45,6 +65,8 @@ begin
   FElement:=Nil;
   FBuffer:=TStringList.Create;
   FLineBuf:='';
+  FElements:=TStringList.Create;
+  FCurElem:=-1;
 end;
 
 procedure T6502DOMOutput.CardRun;
@@ -70,6 +92,7 @@ begin
     case op of
       $80: FBuffer.Add(GetStringPtr(2));
       $82: FBuffer.Clear;
+      $8e: SetElement;
       $90: FBuffer.Add(IntToHex(Memory[2], 2));
       $91: FBuffer.Add(IntToHex(GetWord(2), 4));
       $92: FBuffer.Add(IntToHex(SysMemory.Memory[GetWord(2)], 2));

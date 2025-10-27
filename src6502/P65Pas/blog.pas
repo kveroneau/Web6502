@@ -16,7 +16,6 @@ type
 var
   OUT: byte absolute $c000;
   KIN: char absolute $c104;
-  CTX: byte absolute $c100;
   IRQ_VEC: pointer absolute $fffe;
   SYS_API: byte absolute $fff0;
   URL: pointer absolute $c220;
@@ -35,26 +34,30 @@ begin
   OUT:=$80;
 end; 
 
-procedure TWrite(s: pointer absolute $c102);
+procedure SetDOMOutput(output: byte absolute $c0e0);
 begin
-  CTX:=$82;
-  CTX:=$80;
+  OUT:=$8e;
 end; 
 
-procedure MWrite(s: pointer absolute $c402);
-var
-  api: byte absolute $c400;
+procedure TWrite(s: pointer absolute $c002);
 begin
-  api:=$82;
-  api:=$80;
+  SetDOMOutput(1);
+  OUT:=$82;
+  OUT:=$80;
 end; 
 
-procedure SetCtl(s: pointer absolute $c502);
-var
-  api: byte absolute $c500;
+procedure MWrite(s: pointer absolute $c002);
 begin
-  api:=$82;
-  api:=$80;
+  SetDOMOutput(2);
+  OUT:=$82;
+  OUT:=$80;
+end; 
+
+procedure SetCtl(s: pointer absolute $c002);
+begin
+  SetDOMOutput(3);
+  OUT:=$82;
+  OUT:=$80;
 end; 
 
 procedure SetFilter(field: pointer absolute $c302; value: pointer absolute $c304);
@@ -168,6 +171,7 @@ end;
 
 begin
   MWrite(@'Web6502 Started.');
+  SetDOMOutput(0);
   IRQ_VEC:=@SysCall;
   BTITLE:=@BlogTitle;
   BPATH:=@BlogPath;
