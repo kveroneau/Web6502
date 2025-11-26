@@ -30,7 +30,7 @@ br:
   .byte "<br/>", $0
 
 welcomemsg:
-  .byte "Web6502 Bootloader v0.1", $0
+  .byte "Web6502 Bootloader v0.2", $0
 
 scanmsg:
   .byte " * Scanning Card Slots...", $0
