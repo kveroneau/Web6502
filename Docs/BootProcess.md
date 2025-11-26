@@ -9,6 +9,7 @@ The `WEB6502.SYS` is loaded at address `$400`, which is a flat binary program wh
   1. Check environment variable `boot=`, if it's set, load it as the program.
       - An example of this in action can be seen with the EhBASIC program, where in the URL, it shows `?boot=basic.bin`.
       - This program will always load into address `$5000`, as a RAW headerless binary program.
+      - This boot method is of course dependant of the presence of the `T6502EnvCard`, and will not work if this card is absent from the Web6502 framework.
   2. Binary filename statically placed into memory via the Web6502 framework at address `$ff00`.
       - An example of this in action can be seen with my Blog program: `FMemory.LoadString('blog.bin'+#0, $ff00);`
       - The stated filename at this location is loaded into address `$5000`, as a RAW headerless binary program.
