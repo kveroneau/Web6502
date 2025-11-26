@@ -1,5 +1,5 @@
 .import popax
-.export _WriteTo, _SetTo, _IdleLoop, _SetRealTime, _SetTimer
+.export _IdleLoop, _SetRealTime, _SetTimer
 
 .importzp ptr2
 

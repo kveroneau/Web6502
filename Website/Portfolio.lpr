@@ -4,7 +4,8 @@ program Portfolio;
 
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
-  Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, webdisk6502;
+  Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, webdisk6502,
+  DeviceHub6502, Status6502;
 
 type
 
@@ -19,6 +20,8 @@ type
     FROM: T6502ROM;
     FRouter: T6502WebRouterCard;
     FDisk: T6502WebDisk;
+    FHub: T6502DeviceHub;
+    FStatus: T6502StatusDevice;
   protected
     procedure DoRun; override;
   public
@@ -48,9 +51,13 @@ begin
   FSlots.Card[0]:=FDOM;
   FSlots.Card[1]:=FRouter;
   FSlots.Card[6]:=FDisk;
+  FStatus:=T6502StatusDevice.Create(Self);
+  FHub:=T6502DeviceHub.Create(Self);
+  FHub.Device[0]:=FSlots;
+  FHub.Device[1]:=FStatus;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.RST_VEC;
-  F6502.Device:=FSlots;
+  F6502.Device:=FHub;
   F6502.Active:=True;
   F6502.HaltVector:=$fff0;
   FMemory.LoadString('portfolio.bin'+#0, $ff00);
