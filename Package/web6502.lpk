@@ -94,6 +94,10 @@
         <Filename Value="table6502.pas"/>
         <UnitName Value="table6502"/>
       </Item>
+      <Item>
+        <Filename Value="vtwidgets6502.pas"/>
+        <UnitName Value="vtwidgets6502"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

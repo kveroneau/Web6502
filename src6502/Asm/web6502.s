@@ -331,6 +331,18 @@ jmpldr:
   sta jmpldr+2
   lda #$80
   sta OUTPUT
+  lda #<OUTPUT
+  sta $f0
+  lda #>OUTPUT
+  sta $f1
+  lda OUT_TYP
+  sta $f2
+  lda DISK
+  sta $f3
+  lda DISK+1
+  sta $f4
+  lda __CARDIO__+6
+  sta $f5
   jmp start_ldr
 .endproc
 
