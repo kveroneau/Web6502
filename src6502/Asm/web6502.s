@@ -30,7 +30,7 @@ br:
   .byte "<br/>", $0
 
 welcomemsg:
-  .byte "Web6502 Bootloader v0.2", $0
+  .byte "Web6502 Bootloader v0.2.1", $0
 
 scanmsg:
   .byte " * Scanning Card Slots...", $0
@@ -73,6 +73,9 @@ canvascard:
 
 tablecard:
   .byte "   - Data Table Card", $0
+
+jsoncard:
+  .byte "   - JSON Disk Card", $0
 
 envrun:
   .byte "boot", $0
@@ -161,6 +164,11 @@ kernsys:
   lda #<wdcard
   ldx #>wdcard
   jmp print_slot
+: cmp #$d7
+  bne :+
+  lda #<jsoncard
+  ldx #>jsoncard
+  jmp print_slot
 : cmp #$8f
   bne :+
   lda #<blogcard
@@ -195,11 +203,13 @@ kernsys:
 
 .proc init_card: near
   cmp #$d6
-  bne :+
-  jsr calc_card
+  bne :++
+: jsr calc_card
   sta DISK+1
   rts
-: cmp #$1e
+: cmp #$d7
+  beq :--
+  cmp #$1e
   bne :+
   jsr calc_card
   sta ENV+1

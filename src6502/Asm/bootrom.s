@@ -20,7 +20,7 @@ bootfile:
   .byte "WEB6502.SYS", $0
 
 welcomemsg:
-  .byte "Web6502 BootROM v0.1", $0
+  .byte "Web6502 BootROM v0.2", $0
 
 booterr:
   .byte ", Boot Error, cannot load WEB6502.SYS!", $0
@@ -36,6 +36,8 @@ ptr: .res 2, $00
 
 .proc _webdisk: near
   cmp #$d6
+  beq :+
+  cmp #$d7
   beq :+
   rts
 : lda #<bootfile

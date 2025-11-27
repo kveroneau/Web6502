@@ -1,4 +1,4 @@
-.export _InitRouter, _PushRoute, _CheckRoute, _URL
+.export _InitRouter, _PushRoute, _CheckRoute, _URL, _RouteSet
 
 .data
 
@@ -47,4 +47,15 @@ ROUTE_CARD: .addr $0000
   lda (ROUTE_CARD),Y
   ldx #$0
   rts
+.endproc
+
+.proc _RouteSet: near
+  ldy #$1
+  lda (ROUTE_CARD),Y
+  beq :+
+  pha
+  lda #$0
+  sta (ROUTE_CARD),Y
+  pla
+: rts
 .endproc

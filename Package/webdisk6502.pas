@@ -5,7 +5,7 @@ unit webdisk6502;
 interface
 
 uses
-  Classes, SysUtils, Card6502, ajaxlib, Web, CardSlots6502, vt6502;
+  Classes, SysUtils, Card6502, ajaxlib, Web, CardSlots6502, vt6502, marked;
 
 type
 
@@ -95,6 +95,8 @@ begin
   op:=Memory[0];
   if op = $d6 then
     TJSHTMLElement(document.getElementById(GetStringPtr(4))).innerHTML:=FRequest.responseText
+  else if op = $d7 then
+    TJSHTMLElement(document.getElementById(GetStringPtr(4))).innerHTML:=markdown(FRequest.responseText)
   else if op = $d8 then
     WriteTerm(FRequest.responseText);
   FreeAndNil(FRequest);
@@ -140,6 +142,7 @@ begin
     $d2: LoadFile;
     $d4: LoadFile;
     $d6: LoadTextFile;
+    $d7: LoadTextFile;
     $d8: LoadTextFile;
   else
     Memory[0]:=0;

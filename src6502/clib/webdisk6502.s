@@ -1,5 +1,5 @@
 .import popax
-.export _InitWebDisk, _WD_LoadFile, _WD_ExecPRG
+.export _InitWebDisk, _WD_LoadFile, _WD_ExecPRG, _WD_LoadTextFile, _WD_LoadMarkdown
 
 .zeropage
 
@@ -16,7 +16,7 @@ WEBDISK_CARD: .addr $0000
   rts
 .endproc
 
-.proc _WD_LoadFile: near
+.proc SetCardData: near
   ldy #$4
   sta (WEBDISK_CARD), Y
   iny
@@ -29,13 +29,22 @@ WEBDISK_CARD: .addr $0000
   txa
   sta (WEBDISK_CARD), Y
   ldy #$0
-  lda #$d2
+  rts
+.endproc
+
+.proc CardOp: near
   sta (WEBDISK_CARD), Y
 : lda (WEBDISK_CARD), Y
   bne :-
   iny
   lda (WEBDISK_CARD), Y
   rts
+.endproc
+
+.proc _WD_LoadFile: near
+  jsr SetCardData
+  lda #$d2
+  jmp CardOp
 .endproc
 
 StartPRG:
@@ -63,4 +72,16 @@ StartPRG:
   sta StartPRG+2
   jsr StartPRG
 : rts
+.endproc
+
+.proc _WD_LoadTextFile: near
+  jsr SetCardData
+  lda #$d6
+  jmp CardOp
+.endproc
+
+.proc _WD_LoadMarkdown: near
+  jsr SetCardData
+  lda #$d7
+  jmp CardOp
 .endproc
