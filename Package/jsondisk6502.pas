@@ -134,6 +134,7 @@ begin
   case FFile.typ of
     0: LoadTextFile;
     1: LoadFile;
+    4: LoadTextFile;
   else
     Memory[0]:=$00;
     Memory[1]:=$7f;

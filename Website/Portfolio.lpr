@@ -4,8 +4,8 @@ program Portfolio;
 
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
-  Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, jsondisk6502,
-  DeviceHub6502, Status6502;
+  Memory6502, CardSlots6502, rom6502, dom6502, router6502, blog6502, webdisk6502,
+  DeviceHub6502, Status6502, jsondisk6502;
 
 type
 
@@ -19,7 +19,8 @@ type
     FDOM: T6502DOMOutput;
     FROM: T6502ROM;
     FRouter: T6502WebRouterCard;
-    FDisk: T6502JSONDisk;
+    FDisk: T6502WebDisk;
+    FJSONDisk: T6502JSONDisk;
     FHub: T6502DeviceHub;
     FStatus: T6502StatusDevice;
   protected
@@ -46,12 +47,14 @@ begin
   FDOM.AddElement('content');
   FDOM.AddElement('title');
   FDOM.AddElement('modified');
-  FDisk:=T6502JSONDisk.Create(Self);
-  FDisk.DiskFile:='portfolio';
+  FDisk:=T6502WebDisk.Create(Self);
+  FJSONDisk:=T6502JSONDisk.Create(Self);
+  FJSONDisk.DiskFile:='portfolio';
   FRouter:=T6502WebRouterCard.Create(Self);
   FSlots.Card[0]:=FDOM;
   FSlots.Card[1]:=FRouter;
   FSlots.Card[6]:=FDisk;
+  FSlots.Card[7]:=FJSONDisk;
   FStatus:=T6502StatusDevice.Create(Self);
   FHub:=T6502DeviceHub.Create(Self);
   FHub.Device[0]:=FSlots;
