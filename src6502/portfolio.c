@@ -37,6 +37,18 @@ void main(){
         if (r != 0){
             SetTo("Loading...", 2); // Visitor requested route, let's let them know we're loading it.
             if (strcmp(URL, "/Welcome") == 0){ SetContent("Welcome to my Online Portfolio!", "Welcome.Page"); }
+            else if (strcmp(URL, "/HowItWorks") == 0){ SetContent("How does this site work anyways?", "AboutSite.Page"); }
+            else if (strcmp(URL, "/PortfolioSource") == 0){ SetContent("Source Code for this site", "portfolio.c"); }
+            else if (strcmp(URL, "/Linux") == 0){ SetContent("Did someone say Linux?", "Linux.Skill"); }
+            else if (strcmp(URL, "/Tools") == 0){ SetContent("Common Tools I've used", "Tools.Skill"); }
+            else if (strcmp(URL, "/Dev") == 0){ SetContent("Did someone say Development?", "Dev.Skill"); }
+            else if (strcmp(URL, "/Linux/Servers") == 0){ SetContent("The most popular server OS", "Servers.Linux"); }
+            else if (strcmp(URL, "/Linux/Desktop") == 0){ SetContent("Year of the Linux Desktop?", "Desktop.Linux"); }
+            else if (strcmp(URL, "/Linux/Salt") == 0){ SetContent("Centralized System Management", "SaltStack.Linux"); }
+            else if (strcmp(URL, "/Linux/Containers") == 0){ SetContent("There's more than just Docker", "Containers.Linux"); }
+            else if (strcmp(URL, "/Linux/Virtualization") == 0){ SetContent("VT-x anyone?", "Virtualization.Linux"); }
+            else if (strcmp(URL, "/Hobbies") == 0){ SetContent("I like more than Linux; I swear!", "Hobbies.Page"); }
+            else if (strcmp(URL, "/Aspirations") == 0){ SetContent("Where do I see myself in 5 years?", "Aspirations.Page"); }
             else if (strcmp(URL, "/test") == 0){ DoTest(); }
             else if (strcmp(URL, "/__halt") == 0){ return; }
             else{ SetTo("Route Not Found", 2); }
