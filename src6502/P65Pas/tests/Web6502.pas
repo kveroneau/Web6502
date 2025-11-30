@@ -26,6 +26,8 @@ procedure Idle;
 procedure FindCard(cardtyp: byte): byte;
 
 procedure strcmp(s1, s2: pointer): boolean;
+procedure strcpy(dest, src: pointer);
+procedure strcat(dest, src: pointer);
 procedure memcpy(src, dest: pointer; size: byte registerY);
 
 implementation
@@ -70,6 +72,58 @@ ne1:
     RTS
 eq1:
     LDA #$ff
+  end; 
+end;
+
+procedure strcpy(dest, src: pointer);
+var
+  p1: pointer absolute $20;
+  p2: pointer absolute $22;
+begin
+  p1:=src;
+  p2:=dest;
+  asm 
+	  LDY #0
+loop2:
+    LDA (p1), Y
+    STA (p2), Y
+    BEQ done2
+    INY
+    BNE loop2
+done2:
+  end;
+end;
+
+procedure strcat(dest, src: pointer);
+var
+  p1: pointer absolute $20;
+  p2: pointer absolute $22;
+begin
+  p1:=src;
+  p2:=dest;
+  asm 
+	  LDY #0
+loop3:
+    LDA (p2), Y
+    BEQ null3
+    INY
+    BNE loop3
+null3:
+    CLC
+    TYA
+    ADC p2
+    STA p2
+    BCC nadd3
+    INC p2+1
+nadd3:
+    LDY #0
+cloop3:
+    LDA (p1), Y
+    STA (p2), Y
+    BEQ done3
+    INY
+    BNE cloop3
+done3:
   end; 
 end;
 

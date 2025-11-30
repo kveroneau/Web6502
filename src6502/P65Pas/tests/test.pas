@@ -105,6 +105,19 @@ goprg:
   StartAddress(addr);
 end;
 
+procedure StrTests;
+var
+  mybuf: str60;
+begin
+  SetRealTime(False);
+  WriteLn(@'Let us have fun with strings!');
+  Prompt(@'Give me a string: ', @cmd2);
+  SetRealTime(True);
+  strcpy(@mybuf, @'Your string was: ');
+  strcat(@mybuf, @cmd2);
+  WriteLn(@mybuf);
+end; 
+
 procedure BasicShell;
 var
   running, reboot: boolean;
@@ -172,6 +185,8 @@ begin
       if LoadTextFile(@'test.txt') = False then
         WriteLn(@'Unable to open file.');
       end;
+    elsif strcmp(@cmd, @'strtest') then
+      StrTests;
     elsif RunCommand(@cmd) then
       WriteLn(@'Program ended.');
     else
