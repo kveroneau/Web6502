@@ -13,6 +13,7 @@ procedure LoadPRG(fname: pointer): pointer;
 procedure LoadTextFile(fname, dest: pointer): boolean;
 procedure LoadMarkdown(fname, dest: pointer): boolean;
 procedure LoadTextFile(fname: pointer): boolean;
+procedure GetFileType(fname: pointer): byte;
 
 implementation
 
@@ -21,6 +22,7 @@ var
   DISK_TYPE: byte;
   DISK_ERR: ^byte;
   DISK_NAME: ^word;
+  FILE_TYPE: ^byte;
 
 procedure SetDiskCard(cardid: byte);
 begin
@@ -31,6 +33,7 @@ begin
   DISK_CARD:=word(0);
   DISK_ERR:=word(1);
   DISK_NAME:=word(2);
+  FILE_TYPE:=Word($a);
   asm
     CLC
 	  LDA cardid 
@@ -38,6 +41,7 @@ begin
     STA DISK_CARD+1
     STA DISK_ERR+1
     STA DISK_NAME+1
+    STA FILE_TYPE+1
   end;
 end;
 
@@ -136,6 +140,13 @@ procedure LoadTextFile(fname: pointer): boolean;
 begin
   Exit(LoadTextFileAPI(fname, Word(0), $d8));
 end;
+
+procedure GetFileType(fname: pointer): byte;
+begin
+  SetFileName(fname);
+  DISK_CARD^:=$d0;
+  Exit(FILE_TYPE^);
+end; 
 
 end.
 

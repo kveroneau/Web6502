@@ -3,7 +3,7 @@
 ////////////////////////////////////////////
 program envrom;
 
-{$BOOTLOADER $c3,$01}
+{$BOOTLOADER $c3,$03}
 uses rom6502;
 
 var
@@ -19,10 +19,10 @@ var
   ENVE: byte absolute $c201;
   ENVK: pointer absolute $c202;
   ENVV: pointer absolute $c204;
-  DSK: byte absolute $c600;
-  DSKE: byte absolute $c601;
-  DSKF: pointer absolute $c602;
-  DSKA: pointer absolute $c604;
+  DSK: byte absolute $c400;
+  DSKE: byte absolute $c401;
+  DSKF: pointer absolute $c402;
+  DSKA: pointer absolute $c404;
 
 procedure CheckEnv;
 begin
@@ -45,7 +45,7 @@ begin
     Exit;
   end;
   asm
-    JMP ($c604)
+    JMP (DSKA)
   end;
 end; 
 

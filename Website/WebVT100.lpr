@@ -5,7 +5,7 @@ program WebVT100;
 uses
   BrowserApp, JS, Classes, SysUtils, Web, rtl.BrowserLoadHelper, MOS6502,
   Memory6502, CardSlots6502, rom6502, vt6502, storage6502, DeviceHub6502,
-  banks6502, cffa6502, webdisk6502, env6502, table6502;
+  banks6502, cffa6502, webdisk6502, env6502, table6502, jsondisk6502;
 
 type
 
@@ -18,6 +18,8 @@ type
     FROM: T6502ROM;
     {$IFDEF TESTROM}
     FTestROM: T6502ROM;
+    FTestROM2: T6502ROM;
+    FBootApps: T6502JSONDisk;
     {$ENDIF}
     FSlots: T6502CardSlots;
     FTerm: TVT100Card;
@@ -39,6 +41,8 @@ type
 
 procedure TWeb6502Terminal.DoRun;
 begin
+  F6502:=TMOS6502.Create(Self);
+  FSlots:=T6502CardSlots.Create(Self);
   FMemory:=T6502Memory.Create(Self);
   FROM:=T6502ROM.Create(Self);
   FROM.Address:=$f000;
@@ -51,10 +55,16 @@ begin
   FTestROM.ROMFile:='rom1';
   FTestROM.Active:=True;
   FMemory.ROM[1]:=FTestROM;
+  FTestROM2:=T6502ROM.Create(Self);
+  FTestROM2.Address:=$f200;
+  FTestROM2.ROMFile:='rom1';
+  FTestROM2.Active:=False;
+  FMemory.ROM[2]:=FTestROM2;
+  FBootApps:=T6502JSONDisk.Create(FSlots);
+  FBootApps.DiskFile:='bootapps';
+  FSlots.Card[4]:=FBootApps;
   {$ENDIF}
   FMemory.Active:=True;
-  F6502:=TMOS6502.Create(Self);
-  FSlots:=T6502CardSlots.Create(Self);
   FTerm:=TVT100Card.Create(FSlots);
   FCFFA1:=T6502CFFA1Card.Create(FSlots);
   FDisk:=T6502WebDisk.Create(FSlots);

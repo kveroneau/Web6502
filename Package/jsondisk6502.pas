@@ -6,7 +6,7 @@ unit jsondisk6502;
 interface
 
 uses
-  Classes, SysUtils, Card6502, Web,JS, ajaxlib, marked;
+  Classes, SysUtils, Card6502, Web,JS, ajaxlib, marked, CardSlots6502, vt6502;
 
 type
 
@@ -34,6 +34,7 @@ type
     procedure LoadTextFile;
     procedure LoadJSONFile;
     procedure GetTypeInfo;
+    procedure WriteTerm(data: string);
   protected
     function GetCardType: byte; override;
   public
@@ -76,6 +77,7 @@ procedure T6502JSONDisk.FileLoaded(Sender: TObject);
 begin
   case FFile.typ of
     1: SysMemory.LoadInto(FWebFile, GetWord(4));
+    3: SetWord(4, SysMemory.LoadPRG(FWebFile));
   end;
   Memory[0]:=0;
   FreeAndNil(FWebFile);
@@ -109,7 +111,7 @@ begin
     Exit;
   end;
   case FFile.typ of
-    0: TJSHTMLElement(document.getElementById(GetStringPtr(4))).innerHTML:=FRequest.responseText;
+    0: WriteTerm(FRequest.responseText);
     4: TJSHTMLElement(document.getElementById(GetStringPtr(4))).innerHTML:=markdown(FRequest.responseText);
   end;
   FreeAndNil(FRequest);
@@ -134,6 +136,7 @@ begin
   case FFile.typ of
     0: LoadTextFile;
     1: LoadFile;
+    3: LoadFile;
     4: LoadTextFile;
   else
     Memory[0]:=$00;
@@ -155,6 +158,27 @@ begin
   FFile:=TJSONFile(FFS.Properties[fname]);
   Memory[$a]:=FFile.typ;
   Memory[1]:=0;
+end;
+
+procedure T6502JSONDisk.WriteTerm(data: string);
+var
+  term: TVT100Card;
+  i: Integer;
+begin
+  i:=T6502CardSlots(Owner).Card[0].CardType;
+  if i = $76 then
+  begin
+    term:=TVT100Card(T6502CardSlots(Owner).Card[0]);
+    for i:=1 to Length(data) do
+    begin
+      if data[i] = #10 then
+        term.Write(#10#13)
+      else
+        term.write(data[i]);
+    end;
+  end
+  else if i = $80 then
+    TJSHTMLElement(document.getElementById(GetStringPtr(4))).innerHTML:=data;
 end;
 
 function T6502JSONDisk.GetCardType: byte;
