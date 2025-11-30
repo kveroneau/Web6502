@@ -54,8 +54,8 @@ begin
   idx:=Memory[1];
   if idx > FVars.Count then
   begin
-    idx:=0;
-    Memory[1]:=0;
+    Memory[1]:=$ff;
+    Exit;
   end;
   SysMemory.LoadString(FVars.Names[idx]+#0, GetWord(2));
   SysMemory.LoadString(FVars.ValueFromIndex[idx]+#0, GetWord(4));
@@ -73,6 +73,7 @@ begin
   op:=Memory[0];
   if op = 0 then
     Exit;
+  Writeln('Env API: ',op);
   case op of
     $e1: GetEnv;
     $e2: FVars.Values[GetStringPtr(2)]:=GetStringPtr(4);

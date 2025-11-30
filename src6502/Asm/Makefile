@@ -25,4 +25,4 @@ clean:
 	rm -rf *.o 
 	rm -rf *.map *.lst
 
-os: ROM0.bin WEB6502.SYS
+os: ROM0.bin WEB6502.SYS KERNEL.SYS

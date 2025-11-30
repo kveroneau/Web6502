@@ -20,7 +20,7 @@ bootfile:
   .byte "WEB6502.SYS", $0
 
 welcomemsg:
-  .byte "Web6502 BootROM v0.2", $0
+  .byte "Web6502 BootROM v0.3", $0
 
 booterr:
   .byte ", Boot Error, cannot load WEB6502.SYS!", $0
@@ -98,6 +98,8 @@ chkrom:
   sta romjsr+1
 romjsr:
   jsr __ROM1_START__
+  inc chkrom+2
+  jmp chkrom
 : rts
 
 res_vec:
@@ -112,6 +114,6 @@ jmp _bootsys
 
 .segment "HEADER"
 
-.byte <res_vec, $01, $4c
+.byte <res_vec, $02, $4c
 .addr _print
 .byte "WebROM$"

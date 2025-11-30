@@ -96,6 +96,15 @@ begin
       Write(chr(op));
     Memory[1]:=0;
   end;
+  if FWM = Nil then
+  begin
+    op:=Memory[$a];
+    if op > 0 then
+    begin
+      FScreen.WebTerminal.Csi(chr(op));
+      Memory[$a]:=0;
+    end;
+  end;
   op:=Memory[0];
   if op = 0 then
     Exit;
