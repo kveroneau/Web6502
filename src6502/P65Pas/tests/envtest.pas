@@ -56,8 +56,15 @@ begin
       running:=False;
     elsif strcmp(@cmd, @'list') then
       ListEnv;
+    elsif strcmp(@cmd, @'get') then
+      if EnvByName(@'hello', @env_value) then
+        Write(@'It exists: ');
+        WriteLn(@env_value);
+      else
+        WriteLn(@'Env "hello" did not exist.');
+      end; 
     else
-      WriteLn(@'Try instead: exit, list');
+      WriteLn(@'Try instead: exit, list, get');
     end; 
   until running = False;
 end; 

@@ -12,6 +12,7 @@ var
 
 procedure InitEnvCard(cardid: byte; ekey, evalue: pointer);
 procedure EnvByIndex(idx: byte registerA);
+procedure EnvByName(s, dest: pointer): boolean;
 
 implementation
 
@@ -51,5 +52,37 @@ begin
   ENV_IDX^:=idx;
   ENV_CARD^:=$e4;
 end; 
+
+{ Currently this will override the ekey, evalue provided to InitEnvCard,
+  I am still trying to decide how to make this work, while also ensuring it
+  runs optimally for operations like EnvByIndex.  Perhaps making it work like
+  CFFA1's OpenDir and ReadDir, but OpenEnv, and ReadEnv... }
+procedure EnvByName(s, dest: pointer): boolean;
+begin
+  asm 
+	  LDY #2
+    LDA s
+    STA (ENV_CARD), Y
+    INY
+    LDA s+1
+    STA (ENV_CARD), Y
+    INY
+    LDA dest
+    STA (ENV_CARD), Y
+    INY
+    LDA dest+1
+    STA (ENV_CARD), Y
+  end;
+  ENV_CARD^:=$e1;
+  asm
+	  LDY #1
+    LDA (ENV_CARD), Y
+    BEQ done1
+    LDA #0
+    RTS
+done1:
+    LDA #$ff
+  end; 
+end;
 
 end.

@@ -77,6 +77,7 @@ var
   addr: pointer absolute $26;
 begin
   SetRealTime(False);
+  strcat(prg, @'.prg');
   addr:=LoadPRG(prg);
   if addr = Word(0) then
     Exit(False);
