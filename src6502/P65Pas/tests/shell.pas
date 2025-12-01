@@ -3,9 +3,9 @@
 ////////////////////////////////////////////
 program shell;
 
-uses Web6502, crt6502, disk6502;
+uses Web6502, crt6502, disk6502, banks6502, storage6502;
 {$ORG $0801}
-{$SET_DATA_ADDR '5000-5FFF'}
+{$SET_DATA_ADDR 'D000-D1FF'}
 
 var
   DISK_TYPE: byte;
@@ -45,6 +45,8 @@ end;
 
 procedure StartAddress(addr: pointer);
 begin
+  SaveMemory;
+  SetBank(1);
   asm
     LDA addr
     STA startprg+1
@@ -53,6 +55,8 @@ begin
 startprg:
     JSR $ffff
   end;
+  SetBank(0);
+  LoadMemory;
 end;
 
 procedure RunCommand(prg: pointer): boolean;
@@ -89,7 +93,9 @@ procedure Shell;
 var
   running: boolean;
 begin
-  SetDisk(6, @disk6);
+  if DISK_TYPE = 0 then
+    SetDisk(6, @disk6);
+  end;
   running:=True;
   repeat 
 	   SetRealTime(False);
@@ -120,9 +126,10 @@ begin
 end; 
 
 begin
-  WriteLn(@'Web6502 Shell v0.1');
+  WriteLn(@'Web6502 Shell v0.2');
   WriteLn(@'PRG Version written in P65Pas.');
   if cardio[0] = $76 then
+    LoadMemory;
     Shell;
   else
     WriteLn(@'Unfortunately, this shell can only run on a VT100 compatible output card.');

@@ -27,6 +27,9 @@ type
     FDisk: T6502WebDisk;
     FEnv: T6502EnvCard;
     FTable: T6502TableCard;
+    FHub: T6502DeviceHub;
+    FBanks: T6502BankedMemory;
+    FStorage: T6502Storage;
     procedure RefreshTerm(Sender: TObject);
   protected
     procedure DoRun; override;
@@ -88,9 +91,18 @@ begin
   FSlots.Card[2]:=FEnv;
   FSlots.Card[3]:=FTable;
   FSlots.Card[6]:=FDisk;
+  FHub:=T6502DeviceHub.Create(Self);
+  FBanks:=T6502BankedMemory.Create(Self);
+  FBanks.BankPage:=$5000;
+  FBanks.Banks:=4;
+  FStorage:=T6502Storage.Create(Self);
+  FStorage.Filename:='storage.bin';
+  FHub.Device[0]:=FSlots;
+  FHub.Device[1]:=FBanks;
+  FHub.Device[2]:=FStorage;
   F6502.Memory:=FMemory;
   F6502.ResetVector:=FROM.RST_VEC;
-  F6502.Device:=FSlots;
+  F6502.Device:=FHub;
   F6502.Active:=True;
   FCFFA1.Compatibility:=True;
   F6502.HaltVector:=$fff0;

@@ -4,7 +4,7 @@
 program test;
 
 uses Web6502, crt6502, disk6502;
-{$ORG $0801}
+{$ORG $2000}
 {$SET_DATA_ADDR '5000-5FFF'}
 
 type

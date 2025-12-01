@@ -60,6 +60,7 @@ begin
   Ctrl:=$ffd1;
   FCurBank:=0;
   FBanks:=0;
+  FPages:=1;
 end;
 
 procedure T6502BankedMemory.DeviceRun;

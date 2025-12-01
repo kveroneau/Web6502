@@ -12,6 +12,9 @@ var
   X_COL: byte = 5;
   
 begin
+  SetRAW;
+  //TextAttr:=0;
+  BackgroundColour(6);
   ClrScr;
   GotoXY(1,30);
   Write(@'Mouse Testing Program.');
@@ -42,8 +45,11 @@ begin
       end; 
     end; 
   until running = False;
+  SetRealTime(False);
   SetMouse(False);
+  TextAttr:=0;
   ClrScr;
+  Exit;
   asm 
 	  LDA #$42
     STA $fff0

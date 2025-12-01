@@ -18,6 +18,7 @@ type
     FLoadOnStart: Boolean;
     FWebFile: TBytesStream;
     procedure FileLoaded(Sender: TObject);
+    procedure LoadError(Sender: TObject; const AError: string);
     procedure LoadInFile;
     procedure SaveOutFile;
   protected
@@ -42,6 +43,11 @@ begin
   FreeAndNil(FWebFile);
 end;
 
+procedure T6502Storage.LoadError(Sender: TObject; const AError: string);
+begin
+  FreeAndNil(FWebFile);
+end;
+
 procedure T6502Storage.LoadInFile;
 var
   data, datax: string;
@@ -52,7 +58,7 @@ begin
   data:=window.localStorage.getItem(FFilename);
   datax:=data+'x';
   if datax = 'nullx' then
-    FWebFile.LoadFromURL(FFilename, True, @FileLoaded)
+    FWebFile.LoadFromURL(FFilename, True, @FileLoaded, @LoadError)
   else
   begin
     size:=FPages*256;
@@ -106,6 +112,7 @@ begin
   FPage:=$d0;
   FPages:=2;
   Ctrl:=$ffd0;
+  FLoadOnStart:=False;
 end;
 
 procedure T6502Storage.DeviceRun;
