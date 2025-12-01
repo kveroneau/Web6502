@@ -7,6 +7,11 @@ interface
 
 uses Web6502;
 
+var
+  MOUSE_BTN: byte absolute $c030;
+  MOUSE_COL: byte absolute $c031;
+  MOUSE_ROW: byte absolute $c032;
+
 procedure Write(s: pointer absolute $c002);
 procedure WriteLn(s: pointer register);
 procedure Prompt(s, buf: pointer);
@@ -18,6 +23,9 @@ procedure WriteHexByte(b: byte);
 procedure WriteHexWord(w: word);
 procedure ForegroundColour(fg: byte registerA);
 procedure BackgroundColour(bg: byte registerA);
+
+procedure SetMask(v: boolean);
+procedure SetMouse(v: boolean);
 
 implementation
 
@@ -109,6 +117,26 @@ begin
     ADC #40
     STA TEXT_ATTR 
   end; 
+end;
+
+procedure SetMask(v: boolean);
+begin
+  if v then
+    OUTPUT_BUF.low:=$ff;
+  else
+    OUTPUT_BUF.low:=$00;
+  end;
+  OUTPUT_CARD:=$8b;
+end; 
+
+procedure SetMouse(v: boolean);
+begin
+  if v then
+    OUTPUT_BUF.low:=$ff;
+  else
+    OUTPUT_BUF.low:=$00;
+  end;
+  OUTPUT_CARD:=$8c;
 end; 
 
 end.

@@ -15,14 +15,19 @@ type
   private
     FTerm: TWebTerminal;
     FCmdBuf: word;
+    FOnRefresh: TNotifyEvent;
     procedure HandleLine(const data: string);
     procedure HandleCtrl(const data: string);
+    procedure HandleMouse(Button, col, row: Integer);
     procedure SyncMemory;
     procedure DoPrompt;
     procedure SetRAWMode;
+    procedure SetMask;
+    procedure SetMouse;
   published
     function GetCardType: byte; override;
   public
+    property OnRefresh: TNotifyEvent read FOnRefresh write FOnRefresh;
     constructor Create(AOwner: TComponent); override;
     procedure CardRun; override;
     procedure Write(const data: string);
@@ -52,8 +57,19 @@ end;
 procedure TVT100Card.HandleCtrl(const data: string);
 begin
   Memory[5]:=ord(data[1]);
+  Memory[6]:=ord(data[2]);
   if data = 'C' then
-    jsIRQ;
+    jsIRQ
+  else if (data = 'F5') and Assigned(FOnRefresh) then
+    FOnRefresh(Self);
+end;
+
+procedure TVT100Card.HandleMouse(Button, col, row: Integer);
+begin
+  Memory[$30]:=Button;
+  Memory[$31]:=col;
+  Memory[$32]:=row;
+  jsIRQ;
 end;
 
 procedure TVT100Card.SyncMemory;
@@ -84,6 +100,23 @@ begin
   FTerm.EnableInput;
 end;
 
+procedure TVT100Card.SetMask;
+begin
+  FTerm.Mode:=tmNormal;
+  if Memory[2] = $ff then
+    FTerm.Mask:=True
+  else
+    FTerm.Mask:=False;
+end;
+
+procedure TVT100Card.SetMouse;
+begin
+  if Memory[2] = $ff then
+    FTerm.Mouse:=True
+  else
+    FTerm.Mouse:=False;
+end;
+
 function TVT100Card.GetCardType: byte;
 begin
   Result:=$76;
@@ -95,6 +128,7 @@ begin
   FTerm:=TWebTerminal.Create;
   FTerm.OnPayload:=@HandleLine;
   FTerm.OnControlCode:=@HandleCtrl;
+  FTerm.OnMouse:=@HandleMouse;
   FTerm.WriteLn('6502 Terminal Card Initialized.');
   FCmdBuf:=$c0a0;
   FTerm.Mode:=tmRaw;
@@ -128,6 +162,8 @@ begin
     $81: DoPrompt;
     $82: FTerm.Clear;
     $8a: SetRAWMode;
+    $8b: SetMask;
+    $8c: SetMouse;
     $90: FTerm.Write(IntToHex(Memory[2], 2));
     $91: FTerm.Write(IntToHex(GetWord(2), 4));
     $92: FTerm.Write(IntToHex(SysMemory.Memory[GetWord(2)], 2));

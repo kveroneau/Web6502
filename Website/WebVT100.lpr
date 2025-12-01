@@ -27,6 +27,7 @@ type
     FDisk: T6502WebDisk;
     FEnv: T6502EnvCard;
     FTable: T6502TableCard;
+    procedure RefreshTerm(Sender: TObject);
   protected
     procedure DoRun; override;
   public
@@ -38,6 +39,16 @@ type
 {$ENDIF}
 
 { TWeb6502Terminal }
+
+procedure TWeb6502Terminal.RefreshTerm(Sender: TObject);
+begin
+  WriteLn('Refresh Requested.');
+  {if F6502.Running then
+    Exit;}
+  F6502.PC:=FMemory.GetWord($fffc);
+  F6502.RunMode:=rmTimer;
+  F6502.Running:=True;
+end;
 
 procedure TWeb6502Terminal.DoRun;
 begin
@@ -66,6 +77,7 @@ begin
   {$ENDIF}
   FMemory.Active:=True;
   FTerm:=TVT100Card.Create(FSlots);
+  FTerm.OnRefresh:=@RefreshTerm;
   FCFFA1:=T6502CFFA1Card.Create(FSlots);
   FDisk:=T6502WebDisk.Create(FSlots);
   FTable:=T6502TableCard.Create(FSlots);

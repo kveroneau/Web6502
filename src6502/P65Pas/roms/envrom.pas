@@ -3,7 +3,7 @@
 ////////////////////////////////////////////
 program envrom;
 
-{$BOOTLOADER $c3,$03}
+{$BOOTLOADER $c5,$04}
 uses rom6502;
 
 var
@@ -34,7 +34,7 @@ begin
   end;
   Write(@', Loading ');
   Write(@prgfile);
-  Write(@'...');
+  Write(@'...'#13#10);
   DSKF:=@prgfile;
   DSK:=$d4;
   repeat 

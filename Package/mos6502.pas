@@ -129,7 +129,9 @@ begin
   if FHaltVector = 0 then
     Exit;
   op:=FMemory.Memory[FHaltVector];
-  if op = $40 then
+  if op = 0 then
+    Exit
+  else if op = $40 then
     FRunMode:=rmTimer
   else if op = $41 then
     FRunMode:=rmReal
@@ -138,6 +140,7 @@ begin
     FTimer.Enabled:=False;
     FRunning:=False;
   end;
+  FMemory.Memory[FHaltVector]:=0;
 end;
 
 procedure TMOS6502.SetActive(AValue: Boolean);

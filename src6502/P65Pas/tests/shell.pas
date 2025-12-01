@@ -15,6 +15,20 @@ var
   prmpt: array[10] of char;
   prmptc: string = ':> ';
   cmd: array[60] of char;
+  DETECTED: string = 'DISK DETECTED.';
+
+procedure CheckCard;
+begin
+  if DISK_TYPE = $d6 then
+    Write(@'WEB');
+    WriteLn(@DETECTED);
+  elsif DISK_TYPE = $d7 then
+    Write(@'JSON');
+    WriteLn(@DETECTED);
+  else
+    WriteLn(@'?UNSUPPORTED CARD');
+  end;
+end; 
 
 procedure SetDisk(cardid: byte; dstr: pointer);
 begin
@@ -23,6 +37,7 @@ begin
     Exit;
   end;
   DISK_TYPE:=cardio[cardid];
+  CheckCard;
   SetDiskCard(cardid);
   strcpy(@prmpt, dstr);
   strcat(@prmpt, @prmptc);
@@ -54,6 +69,9 @@ begin
     if ftype = 0 then
       LoadTextFile(prg);
       Exit(True);
+    elsif ftype = 1 then
+      addr:=$2000;
+      LoadFile(prg, addr);
     elsif ftype = 3 then
       addr:=LoadPRG(prg);
     else
@@ -79,6 +97,7 @@ begin
      SetRealTime(True);
      if strcmp(@cmd, @'exit') then
        running:=False;
+       SetRealTime(False);
      elsif strcmp(@cmd, @'cls') then
        ClrScr;
      elsif strcmp(@cmd, @disk4) then
@@ -87,6 +106,11 @@ begin
        SetDisk(6, @disk6);
      elsif strcmp(@cmd, @disk7) then
        SetDisk(7, @disk7);
+     elsif strcmp(@cmd, @'halt') then
+       asm 
+	       LDA #$42
+         STA $fff0
+       end; 
      else
        if RunCommand(@cmd) = False then
          WriteLn(@'Program not found.');
