@@ -25,7 +25,7 @@ end;
 
 begin
   Write(@'; PasROM v0.1');
-  ExecPRG(@'test.prg');
+  ExecPRG(@'blog.prg');
   Exit;
 end.
 

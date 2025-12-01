@@ -18,6 +18,7 @@ type
     function GetDateInfo: string;
     procedure RecLoaded(DataSet: TDataSet);
     procedure DoLocate;
+    procedure SetupCard(Sender: TObject);
   protected
     function GetCardType: byte; override;
   public
@@ -63,6 +64,13 @@ begin
     Memory[1]:=$ff;
 end;
 
+procedure T6502WebsiteBlogCard.SetupCard(Sender: TObject);
+begin
+  SetWord($20, CardAddr+$30);
+  SetWord($22, CardAddr+$80);
+  SetWord($24, CardAddr+$a0);
+end;
+
 function T6502WebsiteBlogCard.GetCardType: byte;
 begin
   Result:=$8f;
@@ -71,6 +79,7 @@ end;
 constructor T6502WebsiteBlogCard.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  OnInitCard:=@SetupCard;
   FTable:=TJSONTable.Create(Self);
   FTable.Datafile:='website';
   FTable.OnSuccess:=@BlogLoaded;

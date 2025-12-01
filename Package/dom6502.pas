@@ -39,6 +39,8 @@ begin
     FCurElem:=FElements.Count
   else
     FCurElem:=i;
+  FElement.innerHTML:=FBuffer.Text;
+  FBuffer.Clear;
   FElement:=TJSHTMLElement(document.getElementById(FElements.Strings[FCurElem]));
 end;
 
