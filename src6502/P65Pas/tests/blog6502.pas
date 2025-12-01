@@ -11,6 +11,7 @@ var
   BLOG_TITLE: ^word;
   BLOG_PATH: ^word;
   BLOG_DATE: ^word;
+  BLOG_ERR: ^byte;
 
 procedure InitBlogCard(cardid: byte);
 procedure BlogFirst;
@@ -28,7 +29,6 @@ implementation
 
 var
   BLOG_CARD: ^byte absolute $30;
-  BLOG_ERR: ^byte;
   BLOG_FLD: ^word;
   BLOG_VALUE: ^word;
 

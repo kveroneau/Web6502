@@ -93,6 +93,7 @@ begin
   op:=Memory[0];
   if op = 0 then
     Exit;
+  Memory[1]:=0;
   case op of
     $10: FTable.DataSet.First;
     $11: FTable.DataSet.Last;
@@ -103,6 +104,8 @@ begin
     $22: DoLocate;
     $80: document.getElementById(GetStringPtr(2)).innerHTML:=markdown(FTable.Strings['Content']);
   end;
+  if FTable.DataSet.EOF then
+    Memory[1]:=$ef;
   Memory[0]:=0;
 end;
 
