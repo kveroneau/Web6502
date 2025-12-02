@@ -20,7 +20,7 @@ bootfile:
   .byte "WEB6502.SYS", $0
 
 welcomemsg:
-  .byte "Web6502 BootROM v0.3", $0
+  .byte "Web6502 BootROM v0.4", $0
 
 booterr:
   .byte ", Boot Error, cannot load WEB6502.SYS!", $0
@@ -38,6 +38,8 @@ ptr: .res 2, $00
   cmp #$d6
   beq :+
   cmp #$d7
+  beq :+
+  cmp #$d8
   beq :+
   rts
 : lda #<bootfile
@@ -67,18 +69,10 @@ ptr: .res 2, $00
   lda BIN_ADDR
   beq :+
   jmp BIN_ADDR
-: lda #<OUT_TYP
-  sta ptr
-  lda #>OUT_TYP
-  sta ptr+1
-  ldy #0
-  lda (ptr),Y
-  cmp #$76
-  bne :+
-  lda #<booterr
+: lda #<booterr
   ldx #>booterr
   jsr _print
-: lda #$42
+  lda #$42
   sta $fff0
 .endproc
 

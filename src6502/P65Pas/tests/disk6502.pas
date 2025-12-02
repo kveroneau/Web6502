@@ -14,6 +14,7 @@ procedure LoadTextFile(fname, dest: pointer): boolean;
 procedure LoadMarkdown(fname, dest: pointer): boolean;
 procedure LoadTextFile(fname: pointer): boolean;
 procedure GetFileType(fname: pointer): byte;
+procedure SetCurDirectory(dirname: pointer);
 
 implementation
 
@@ -146,6 +147,12 @@ begin
   SetFileName(fname);
   DISK_CARD^:=$d0;
   Exit(FILE_TYPE^);
+end; 
+
+procedure SetCurDirectory(dirname: pointer);
+begin
+  SetFileName(dirname);
+  DISK_CARD^:=$d1;
 end; 
 
 end.
