@@ -71,6 +71,10 @@ ne1:
     LDA #$00
     RTS
 eq1:
+    LDA (p2), Y
+    BEQ done1
+    BNE ne1
+done1:
     LDA #$ff
   end; 
 end;

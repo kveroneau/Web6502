@@ -7,6 +7,9 @@ interface
 
 uses Web6502;
 
+var
+  VFS_URL: pointer absolute $c620;
+
 procedure ReadGlobal(key: pointer absolute $c102; dest: pointer absolute $c104);
 procedure SetGlobal(key: pointer absolute $c102; v: pointer absolute $c104);
 procedure SaveGlobals;
@@ -15,12 +18,14 @@ procedure AddFlag(flag: pointer absolute $c102);
 procedure DelFlag(flag: pointer absolute $c102);
 procedure HasFlag(flag: pointer absolute $c102): boolean;
 
+procedure PushRoute(path: pointer absolute $c602);
+procedure CheckRoute: boolean;
+
 implementation
 
 var
   MODEL: byte absolute $c100;
-  MKEY: word absolute $c102;
-  MVAL: word absolute $c104;
+  VFS: byte absolute $c600;
 
 procedure ReadGlobal(key: pointer absolute $c102; dest: pointer absolute $c104);
 begin
@@ -52,6 +57,19 @@ begin
   MODEL:=$f5;
   asm 
 	  LDA $c101 
+  end; 
+end;
+
+procedure PushRoute(path: pointer absolute $c602);
+begin
+  VFS:=$40;
+end; 
+
+procedure CheckRoute: boolean;
+begin
+  VFS:=$41;
+  asm 
+	  LDA VFS+1
   end; 
 end;
 
