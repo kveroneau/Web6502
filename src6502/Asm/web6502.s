@@ -30,7 +30,7 @@ br:
   .byte "<br/>", $0
 
 welcomemsg:
-  .byte "Web6502 Bootloader v0.2.1", $0
+  .byte "Web6502 Bootloader v0.3", $0
 
 scanmsg:
   .byte " * Scanning Card Slots...", $0
@@ -241,13 +241,14 @@ start_ldr:
   bne :-
   iny
   lda (DISK), Y
-  bne :+
+  bne ldrerr
   lda #<startmsg
   ldx #>startmsg
   jsr _println
 jmpldr:
   jmp BIN_ADDR
-: lda #<failmsg
+ldrerr:
+  lda #<failmsg
   ldx #>failmsg
   jmp _println
 
@@ -319,6 +320,21 @@ jmpldr:
   jmp start_ldr
 .endproc
 
+.proc kernldr: near
+  lda __RAM3_START__
+  cmp #$37
+  bne :+
+  lda __RAM3_START__+1
+  cmp #$13
+  bne :+
+  lda __RAM3_START__+2
+  sta jmpldr+1
+  lda #>__RAM3_START__
+  sta jmpldr+2
+  jmp jmpldr
+: jmp ldrerr
+.endproc
+
 .proc kernel: near
   lda #<loadingmsg
   ldx #>loadingmsg
@@ -334,11 +350,9 @@ jmpldr:
   iny
   lda #<__RAM3_START__
   sta (DISK), Y
-  sta jmpldr+1
   iny
   lda #>__RAM3_START__
   sta (DISK), Y
-  sta jmpldr+2
   lda #$80
   sta OUTPUT
   lda #<OUTPUT
@@ -353,6 +367,10 @@ jmpldr:
   sta $f4
   lda __CARDIO__+6
   sta $f5
+  lda #<kernldr
+  sta jmpldr+1
+  lda #>kernldr
+  sta jmpldr+2
   jmp start_ldr
 .endproc
 
