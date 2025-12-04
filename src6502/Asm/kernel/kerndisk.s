@@ -1,5 +1,5 @@
 .import __CARD_START__, __CARDIO__
-.export disk_api, disk_err, disk_fname, disk_ptr, SetDiskCard, DetectDisks
+.export disk_api, disk_err, disk_fname, disk_ptr, SetDiskCard, DetectDisks, disk_addr, file_type
 
 .bss
 
@@ -32,6 +32,16 @@ disk_ptr:
   stx $c605
   rts
 
+disk_addr:
+  lda $c604
+  ldx $c605
+  ldy #0
+  rts
+
+file_type:
+  lda $c60a
+  rts
+
 .proc SetDiskCard: near
   cmp #3
   bcs :+
@@ -39,6 +49,12 @@ disk_ptr:
   lda disks, Y
   beq :+
   sty curdisk
+  sty $f4
+  pha
+  tay
+  lda __CARDIO__, Y
+  sta $f5
+  pla
   clc
   adc #$c0
   sta disk_api+2
@@ -48,6 +64,9 @@ disk_ptr:
   sta disk_fname+5
   sta disk_ptr+2
   sta disk_ptr+5
+  sta disk_addr+2
+  sta disk_addr+5
+  sta file_type+2
 : rts
 .endproc
 

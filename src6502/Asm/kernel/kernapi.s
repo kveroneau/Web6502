@@ -1,7 +1,7 @@
 .import out_api, out_buf, out_ptr, SetOutputCard, newline, in_char, set_xy, set_attr
-.import disk_api, disk_err, disk_fname, disk_ptr, SetDiskCard
+.import disk_api, disk_err, disk_fname, disk_ptr, SetDiskCard, disk_addr, file_type
 
-.export OutputAPI, print, println, printbyte
+.export OutputAPI, print, println, printbyte, printword
 .export DiskAPI
 
 SPTR = $d100
@@ -21,7 +21,7 @@ prompt:
   sta chk_char+1
   stx chk_char+2
   sta zero_char+1
-  sta zero_char+2
+  stx zero_char+2
   jsr out_ptr
   tya
   jsr out_api
@@ -81,12 +81,35 @@ chk_char:
   jmp OutputAPI
 .endproc
 
+.proc printword: near
+  ldy #$91
+  jmp OutputAPI
+.endproc
+
+.proc set_disk_ptr: near
+  lda SPTR
+  ldx SPTR+1
+  jmp disk_ptr
+.endproc
+
 .proc DiskAPI: near
   cpy #0
   bne :+
   jmp SetDiskCard
 : jsr disk_fname
-  tya
+  cpy #$d2
+  bne :+
+  jsr set_disk_ptr
+: tya
   jsr disk_api
-  jmp disk_err
+  jsr disk_err
+  bne :+++
+  cpy #$d0
+  bne :+
+  jmp file_type
+: cpy #$d4
+  bne :+
+  jmp disk_addr
+: lda #0
+: rts
 .endproc

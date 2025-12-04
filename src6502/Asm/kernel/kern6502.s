@@ -1,5 +1,5 @@
-.import __CARD_START__, __CARDIO__, __ROM0_START__, __ROM1_START__
-.import OutputAPI, print, println, printbyte
+.import __CARD_START__, __CARDIO__, __ROM0_START__, __ROM1_START__, __SHELL_START__
+.import OutputAPI, print, println, printbyte, printword
 .import DiskAPI, DetectDisks
 
 ROM0_VER = __ROM0_START__+1
@@ -15,6 +15,9 @@ diskdetect:
 
 disks:
   .byte " disks.", $0
+
+shellsys:
+  .byte "SHELL.SYS", $0
 
 romvermsg:
   .byte "Running on ROM Version ", $0
@@ -32,26 +35,7 @@ buf:
 
 .code
 
-.proc _main: near
-  lda #0
-  ldy #0
-  jsr OutputAPI
-  lda #32
-  ldy #4
-  jsr OutputAPI
-  lda #<welcomemsg
-  ldx #>welcomemsg
-  jsr println
-  ldy #1
-  jsr OutputAPI
-  lda #<diskdetect
-  ldx #>diskdetect
-  jsr print
-  jsr DetectDisks
-  jsr printbyte
-  lda #<disks
-  ldx #>disks
-  jsr println
+.proc test: near
   lda #<buf
   sta $d100
   lda #>buf
@@ -75,7 +59,63 @@ buf:
   jsr OutputAPI
   ldy #1
   jsr OutputAPI
+  pla
+  tax
+  pla
+  jsr printword
+  ldy #1
+  jsr OutputAPI
+  tsx
+  txa
+  jsr printbyte
+  lda #>_exit
+  ldx #<_exit-1
+  pha
+  txa
+  pha
   rts
+.endproc
+
+.proc _main: near
+  lda #0
+  ldy #0
+  jsr OutputAPI
+  lda #32
+  ldy #4
+  jsr OutputAPI
+  lda #<welcomemsg
+  ldx #>welcomemsg
+  jsr println
+  ldy #1
+  jsr OutputAPI
+  lda #<diskdetect
+  ldx #>diskdetect
+  jsr print
+  jsr DetectDisks
+  jsr printbyte
+  lda #<disks
+  ldx #>disks
+  jsr println
+  lda #<__SHELL_START__
+  sta $d100
+  lda #>__SHELL_START__
+  sta $d101
+  lda #<shellsys
+  ldx #>shellsys
+  ldy #$d2
+  jsr DiskAPI
+  bne :+
+  pla
+  pla
+  ldy #>__SHELL_START__
+  dey
+  tya
+  ldx #<__SHELL_START__
+  dex
+  pha
+  txa
+  pha
+: rts
 .endproc
 
 .segment "STARTUP"
@@ -85,6 +125,7 @@ kern_start:
   txs
   cld
   jsr _main
+_exit:
   lda #$42
   sta $fff0
 

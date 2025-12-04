@@ -157,6 +157,7 @@ begin
   end;
   FFile:=TJSONFile(FFS.Properties[fname]);
   Memory[$a]:=FFile.typ;
+  Memory[0]:=0;
   Memory[1]:=0;
 end;
 
