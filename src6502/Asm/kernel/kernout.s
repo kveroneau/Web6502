@@ -1,5 +1,5 @@
 .import __CARDIO__
-.export out_api, out_buf, out_ptr, SetOutputCard, newline, in_char, set_xy, set_attr
+.export out_api, out_buf, out_ptr, SetOutputCard, newline, in_char, set_xy, set_attr, out_char
 
 .rodata
 
@@ -18,6 +18,10 @@ newline:
 
 out_api:
   sta $c000
+  rts
+
+out_char:
+  sta $c001
   rts
 
 out_buf:
@@ -48,6 +52,7 @@ set_xy:
   clc
   adc #$c0
   sta out_api+2
+  sta out_char+2
   sta out_buf+2
   sta out_buf+5
   sta out_ptr+2

@@ -18,13 +18,6 @@ procedure SetCurDirectory(dirname: pointer);
 
 implementation
 
-var
-  DISK_CARD: ^byte absolute $24;
-  DISK_TYPE: byte;
-  DISK_ERR: ^byte;
-  DISK_NAME: ^word;
-  FILE_TYPE: ^byte;
-
 procedure SetDisk(diskid: byte registerA);
 begin
   asm 

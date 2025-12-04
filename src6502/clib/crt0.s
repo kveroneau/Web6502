@@ -18,10 +18,7 @@ cdone:
 
 .segment "STARTUP"
 
-_init:   ldx #$ff
-         txs
-         cld
-         lda #<(__HEAP_START__+__HEAP_SIZE__)
+_init:   lda #<(__HEAP_START__+__HEAP_SIZE__)
          sta sp
          lda #>(__HEAP_START__+__HEAP_SIZE__)
          sta sp+1
@@ -43,6 +40,7 @@ _init:   ldx #$ff
          jsr _main
 
 _exit:   jsr donelib
+         rts
          lda #$42
          sta $fff0
          jsr initirq

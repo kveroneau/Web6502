@@ -1,7 +1,17 @@
 .import popax
 .export _write
 
-.importzp ptr2, tmp1
+.importzp ptr2, tmp1, tmp2
+
+.include "kernel.inc"
+
+.proc out_a: near
+    sty tmp2
+    ldy #5
+    jsr OutputAPI
+    ldy tmp2
+    rts
+.endproc
 
 .proc _write: near
     sta tmp1
@@ -14,7 +24,7 @@
     rts
 :   ldy #0
 :   lda (ptr2), Y
-    sta $c001
+    jsr out_a
     iny
     cpy tmp1
     bne :-

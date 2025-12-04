@@ -1,4 +1,4 @@
-.import out_api, out_buf, out_ptr, SetOutputCard, newline, in_char, set_xy, set_attr
+.import out_api, out_buf, out_ptr, SetOutputCard, newline, in_char, set_xy, set_attr, out_char
 .import disk_api, disk_err, disk_fname, disk_ptr, SetDiskCard, disk_addr, file_type
 
 .export OutputAPI, print, println, printbyte, printword
@@ -37,6 +37,9 @@ chk_char:
   cpy #0
   bne :+
   jmp SetOutputCard
+: cpy #5
+  bne :+
+  jmp out_char
 : cpy #1
   bne :+
   lda newline
